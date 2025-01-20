@@ -24,10 +24,10 @@ export const TalkRoomPage = () => {
       {/* 会話 */}
       <section className="w-[50%] h-full flex flex-col gap-3 items-center justify-center">
         <div>
-          <ChatBox />
+          <ChatBox user={user} />
         </div>
 
-        <div>
+        <div className="mt-5">
           <Button onClick={() => router.push("/")}>トップページに戻る</Button>
         </div>
       </section>

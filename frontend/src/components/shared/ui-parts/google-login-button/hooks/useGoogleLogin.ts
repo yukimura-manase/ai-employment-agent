@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabaseClient } from "@/libs/supabase";
 import { Session, User, UserIdentity } from "@supabase/supabase-js";
-import { UserApi } from "@/apis/userAPI";
+import { UserApi } from "@/apis/userApi";
 import { UserRes } from "@/types/user/res/UserRes";
 
 interface UseGoogleLoginProps {

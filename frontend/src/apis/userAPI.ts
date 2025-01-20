@@ -14,7 +14,7 @@ export class UserApi {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(req),
     });
-    console.log("res", res);
+    // console.log("res", res);
     return res.json();
   }
 }
