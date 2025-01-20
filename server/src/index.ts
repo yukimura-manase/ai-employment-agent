@@ -2,6 +2,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { userRouter } from "./api/user/index.js"; // ES Modules なので拡張子が必要 (TSでもJSを指定する)
+import { messageRouter } from "./api/message/index.js";
 
 // これだけで .env が読み込まれ、
 // process.env.XXX にアクセスできるようになる
@@ -23,6 +24,8 @@ app.get("/", (c) => {
 
 // toC User Entity API Group
 app.route("/users", userRouter);
+
+app.route("/messages", messageRouter);
 
 const port = 3500;
 console.log(`Server is running on http://localhost:${port}`);

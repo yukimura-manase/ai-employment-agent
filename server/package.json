@@ -12,6 +12,7 @@
     "@supabase/supabase-js": "^2.47.10",
     "dotenv": "^16.4.7",
     "hono": "^4.6.15",
+    "langchain": "^0.3.11",
     "prisma": "^6.1.0",
     "tsconfig-paths": "^4.2.0"
   },

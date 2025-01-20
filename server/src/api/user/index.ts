@@ -28,9 +28,8 @@ userRouter.post("/", async (context) => {
       name: string;
       email: string;
     }>();
-
-    console.log("name", name);
-    console.log("email", email);
+    // console.log("name", name);
+    // console.log("email", email);
 
     // パラメータの簡易バリデーション（必要に応じてしっかりとしたチェックを入れる）
     if (!name || !email) {

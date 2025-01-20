@@ -23,5 +23,26 @@ model User {
   email     String   @unique
   name      String
   createdAt DateTime @default(now())
+  messages  Message[]
 }
 
+// メッセージの送信者を特定するための列挙型
+enum Sender {
+  USER
+  AI
+}
+
+/** 
+  * Message Entity
+
+  - メッセージの送信者を特定するために、userIdを外部キーとして持つ。
+  - User:Message = 1:N の関係を持つ。
+ */ 
+model Message {
+  messageId String @id @default(uuid(7)) // UUID v7を指定する。
+  userId    String
+  user      User   @relation(fields: [userId], references: [userId])
+  sender    Sender // メッセージの送信者を特定するための列挙型
+  content   String
+  createdAt DateTime @default(now())
+}
