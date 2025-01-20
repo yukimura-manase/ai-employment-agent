@@ -3,7 +3,6 @@ import { Button } from "@/components/shared/ui-elements/button";
 import { useUserStates } from "@/stores/user";
 import { useRouter } from "next/router";
 import { ChatBox } from "./parts/chat-box";
-import { SideBarLayout } from "@/components/layouts/sidebar-layout";
 import {
   SidebarProvider,
   SidebarTrigger,
