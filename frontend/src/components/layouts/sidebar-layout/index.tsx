@@ -19,7 +19,7 @@ export const SideBarLayout = ({ children }: { children: ReactNode }) => {
       <SidebarProvider>
         <AppSidebar />
 
-        <main className="flex gap-2">
+        <main>
           <SidebarTrigger />
           {children}
         </main>

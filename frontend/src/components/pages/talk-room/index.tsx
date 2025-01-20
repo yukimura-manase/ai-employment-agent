@@ -3,6 +3,12 @@ import { Button } from "@/components/shared/ui-elements/button";
 import { useUserStates } from "@/stores/user";
 import { useRouter } from "next/router";
 import { ChatBox } from "./parts/chat-box";
+import { SideBarLayout } from "@/components/layouts/sidebar-layout";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/shared/ui-elements/sidebar";
+import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
 
 export const TalkRoomPage = () => {
   const { user } = useUserStates();
@@ -16,21 +22,20 @@ export const TalkRoomPage = () => {
 
   return (
     <BasicLayout>
-      {/* AI エージェント Section */}
-      <section className="w-[50%] h-full">
-        <img src="/images/AI就活エージェント.png" alt="AI就活エージェント" />
-      </section>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarTrigger />
+        {/* 会話 */}
+        <section className="w-full h-full flex flex-col gap-3 items-center justify-center">
+          <div>
+            <ChatBox user={user} />
+          </div>
 
-      {/* 会話 */}
-      <section className="w-[50%] h-full flex flex-col gap-3 items-center justify-center">
-        <div>
-          <ChatBox user={user} />
-        </div>
-
-        <div className="mt-5">
-          <Button onClick={() => router.push("/")}>トップページに戻る</Button>
-        </div>
-      </section>
+          <div className="mt-5">
+            <Button onClick={() => router.push("/")}>トップページに戻る</Button>
+          </div>
+        </section>
+      </SidebarProvider>
     </BasicLayout>
   );
 };

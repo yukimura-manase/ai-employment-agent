@@ -23,13 +23,13 @@ export const ChatBox = ({ user }: ChatBoxProps) => {
   const {} = useChatBox({ userId: user.userId, fetchMessages });
 
   return (
-    <Card className="w-full max-w-2xl mx-auto h-[700px] flex flex-col">
+    <Card className="w-full h-[700px] flex flex-col">
       <CardHeader className="border-b p-4">
         <ChatBoxHeader />
       </CardHeader>
 
       {/* チャットメッセージ */}
-      <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
+      <CardContent className="overflow-y-auto p-4 space-y-4">
         {messages &&
           messages.length > 0 &&
           messages.map((message: MessageRes) => (
