@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
+    "@langchain/core": "^0.3.32",
+    "@livekit/agents": "^0.6.2",
     "@prisma/client": "^6.1.0",
     "@supabase/supabase-js": "^2.47.10",
     "dotenv": "^16.4.7",
