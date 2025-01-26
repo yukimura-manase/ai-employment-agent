@@ -14,6 +14,7 @@ interface MessageActions {
   setVoiceInputMsg: (voiceInputMsg: string) => void;
   fetchMessages: (userId: string) => Promise<void>;
   createUserMessage: (userId: string) => Promise<void>;
+  createAIMessage: (userId: string, content: string) => Promise<void>;
 }
 
 /**
@@ -96,6 +97,35 @@ export const useMessageStates = create<MessageStates & MessageActions>()(
 
         // 音声入力内容を初期化する。
         set({ voiceInputMsg: "" });
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    createAIMessage: async (userId: string, content: string) => {
+      try {
+        const copyMessages = useMessageStates.getState().messages;
+
+        // AIメッセージをStoreに保存
+        set({
+          messages: [
+            ...copyMessages,
+            {
+              userId: userId,
+              messageId: randomUUID(),
+              content: content,
+              sender: "AI",
+              createdAt: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // AIメッセージをDBに保存
+        await MessageApi.createMessage({
+          userId,
+          sender: "AI",
+          content: content,
+        });
       } catch (error) {
         console.error(error);
       }

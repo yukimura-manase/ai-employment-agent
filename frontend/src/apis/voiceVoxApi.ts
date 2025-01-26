@@ -1,0 +1,38 @@
+import { voiceVoxUrl } from "@/constants/env";
+
+export class VoiceVoxApi {
+  private constructor() {}
+
+  /**
+   * テキストから音声を生成する
+   */
+  static async synthesizeSpeech(text: string): Promise<Blob> {
+    // 音声合成用のクエリを作成
+    const queryResponse = await fetch(
+      `${voiceVoxUrl}/audio_query?text=${encodeURIComponent(text)}&speaker=1`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const audioQuery = await queryResponse.json();
+
+    // 音声を合成
+    const synthesisResponse = await fetch(
+      `${voiceVoxUrl}/synthesis?speaker=1&enable_interrogative_upspeak=true`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(audioQuery),
+      }
+    );
+
+    return new Blob([await synthesisResponse.arrayBuffer()], {
+      type: "audio/wav",
+    });
+  }
+}

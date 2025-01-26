@@ -23,12 +23,19 @@ interface VoiceInputProps {
  */
 export const VoiceInput = ({ userId }: VoiceInputProps) => {
   const { user } = useUserStates();
-  const { messages, voiceInputMsg, setVoiceInputMsg, createUserMessage } =
-    useMessageStates();
-  const { isListening, toggleListening, stopConversation } = useVoiceInput({
-    userId,
+  const {
+    messages,
+    voiceInputMsg,
     setVoiceInputMsg,
     createUserMessage,
+    createAIMessage,
+  } = useMessageStates();
+  const { isListening, toggleListening, stopConversation } = useVoiceInput({
+    userId,
+    voiceInputMsg,
+    setVoiceInputMsg,
+    createUserMessage,
+    createAIMessage,
   });
 
   return (
