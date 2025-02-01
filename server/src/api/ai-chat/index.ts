@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { PrismaClient } from "@prisma/client";
 import { env } from "hono/adapter";
+import { WebSocket, WebSocketServer } from "ws";
 
-export const AiChatRouter = new Hono();
+export const aiChatRouter = new Hono();

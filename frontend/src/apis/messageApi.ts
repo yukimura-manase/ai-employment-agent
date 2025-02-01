@@ -15,7 +15,7 @@ export class MessageApi {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(req),
     });
-    console.log("fetchMessages Res:", res);
+    // console.log("fetchMessages Res:", res);
     return res.json();
   }
 

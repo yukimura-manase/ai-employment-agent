@@ -16,10 +16,12 @@
     "hono": "^4.6.15",
     "langchain": "^0.3.11",
     "prisma": "^6.1.0",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "@types/ws": "^8.5.14",
     "tsx": "^4.7.1",
     "typescript": "^5.7.2"
   },
