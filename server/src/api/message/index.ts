@@ -67,3 +67,33 @@ messageRouter.put("/", async (context) => {
     return context.json({ error: "Internal Server Error" }, 500);
   }
 });
+
+// Messageの削除: DELETE /messages
+messageRouter.delete("/", async (context) => {
+  const { DATABASE_URL } = env<{ DATABASE_URL: string }>(context);
+
+  // Req.userId を取得する。
+  const { userId } = await context.req.json<{
+    userId: string;
+  }>();
+
+  try {
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: DATABASE_URL,
+        },
+      },
+    });
+
+    // userIdに紐づくMessageをすべて削除する。
+    const deletedMessage = await prisma.message.deleteMany({
+      where: { userId },
+    });
+
+    return context.json(deletedMessage);
+  } catch (error) {
+    console.error(error);
+    return context.json({ error: "Internal Server Error" }, 500);
+  }
+});
