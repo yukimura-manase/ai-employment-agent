@@ -16,26 +16,29 @@ declare global {
 
 interface VoiceInputProps {
   userId: string;
+  isAiThinking: boolean;
 }
 
 /**
  * 音声入力コンポーネント
  */
-export const VoiceInput = ({ userId }: VoiceInputProps) => {
+export const VoiceInput = ({ userId, isAiThinking }: VoiceInputProps) => {
   const { user } = useUserStates();
   const {
     messages,
     voiceInputMsg,
     setVoiceInputMsg,
     createUserMessage,
-    createAIMessage,
+    setAiThinking,
+    fetchMessages,
   } = useMessageStates();
   const { isListening, toggleListening, stopConversation } = useVoiceInput({
     userId,
     voiceInputMsg,
     setVoiceInputMsg,
     createUserMessage,
-    createAIMessage,
+    setAiThinking,
+    fetchMessages,
   });
 
   return (

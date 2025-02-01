@@ -1,7 +1,7 @@
 import { serverUrl } from "@/constants/env";
 import { CreateMessageReq } from "@/types/message/req/CreateMessageReq";
 import { GetMessageListReq } from "@/types/message/req/GetMessageListReq";
-import { GetMessageListRes, MessageRes } from "@/types/message/res/MessageRes";
+import { MessageRes } from "@/types/message/res/MessageRes";
 
 export class MessageApi {
   private constructor() {}

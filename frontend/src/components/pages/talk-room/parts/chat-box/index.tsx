@@ -13,13 +13,14 @@ import { MessageRes } from "@/types/message/res/MessageRes";
 import { MessageUi } from "./parts/message";
 import { UserRes } from "@/types/user/res/UserRes";
 import { useChatBox } from "./hooks/useChatBox";
+import { Skeleton } from "@/components/shared/ui-elements/skeleton";
 
 interface ChatBoxProps {
   user: UserRes;
 }
 
 export const ChatBox = ({ user }: ChatBoxProps) => {
-  const { messages, fetchMessages } = useMessageStates();
+  const { messages, fetchMessages, isAiThinking } = useMessageStates();
   const {} = useChatBox({ userId: user.userId, fetchMessages });
 
   return (
@@ -35,11 +36,22 @@ export const ChatBox = ({ user }: ChatBoxProps) => {
           messages.map((message: MessageRes) => (
             <MessageUi message={message} key={message.messageId} />
           ))}
+
+        {/* AIが思考中の場合は、最後尾にローディング・アイコンを表示する */}
+        {isAiThinking && (
+          <div className="flex items-center space-x-4">
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[200px]" />
+            </div>
+          </div>
+        )}
       </CardContent>
 
       {/* 音声入力 */}
       <CardFooter className="border-t p-4 flex flex-col space-y-4">
-        <VoiceInput userId={user.userId} />
+        <VoiceInput userId={user.userId} isAiThinking={isAiThinking} />
       </CardFooter>
     </Card>
   );

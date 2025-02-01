@@ -3,7 +3,6 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/shared/ui-elements/avatar";
-import { Message } from "@/types/message/Message";
 import { MessageRes } from "@/types/message/res/MessageRes";
 
 interface MessageProps {
@@ -23,6 +22,7 @@ export const MessageUi = ({ message }: MessageProps) => {
         message.sender === "USER" ? "justify-end" : "justify-start"
       }`}
     >
+      {/* AIのメッセージの場合は、アバターを表示する */}
       {message.sender === "AI" && (
         <Avatar className="h-8 w-8 mr-2">
           <AvatarImage src="/images/AI就活エージェント.png" alt="AI Agent" />

@@ -1,14 +1,16 @@
 import { CreateMessageReq } from "@/types/message/req/CreateMessageReq";
 import { useState, useEffect, useCallback } from "react";
-import { AiChatApi } from "@/apis/aiChatApi";
 import { VoiceVoxApi } from "@/apis/voiceVoxApi";
+import { AiChatApi } from "@/apis/aiChatApi";
+import { AiChatMessageRes } from "@/types/message/res/AiChatMessageRes";
 
 interface UseVoiceInputProps {
   userId: string;
   voiceInputMsg: string;
   setVoiceInputMsg: (transcript: string) => void;
   createUserMessage: (userId: string) => Promise<void>;
-  createAIMessage: (userId: string, message: string) => Promise<void>;
+  setAiThinking: (isAiThinking: boolean) => void;
+  fetchMessages: (userId: string) => Promise<void>;
 }
 
 /**
@@ -21,12 +23,11 @@ export const useVoiceInput = ({
   voiceInputMsg,
   setVoiceInputMsg,
   createUserMessage,
-  createAIMessage,
+  setAiThinking,
+  fetchMessages,
 }: UseVoiceInputProps) => {
   // 音声認識の状態
   const [isListening, setIsListening] = useState(false);
-  // WebSocket接続の状態
-  const [isWSConnected, setIsWSConnected] = useState(false);
 
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -36,68 +37,6 @@ export const useVoiceInput = ({
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(
     null
   );
-
-  // WebSocket接続の初期化
-  // userId, isWSConnected の変更を監視して、WebSocket接続を初期化する。
-  useEffect(() => {
-    // サブスクリプションの状態
-    let isSubscribed = true;
-
-    /**
-     * WebSocket接続の初期化
-     */
-    const initializeWebSocket = async () => {
-      try {
-        if (!isWSConnected) {
-          console.log("WebSocket connecting...");
-          await AiChatApi.connect(
-            async (response) => {
-              console.log("Received response:", response);
-
-              // テキスト応答を処理
-              if (response.type === "text") {
-                await createAIMessage(userId, response.content);
-              }
-
-              // 音声応答を処理（テキスト応答の後に再生）
-              if (response.type === "speech") {
-                try {
-                  const audio = new Audio(
-                    `data:audio/wav;base64,${response.content}`
-                  );
-                  await audio.play();
-                  console.log("Speech playback completed");
-                } catch (error) {
-                  console.error("Error playing speech:", error);
-                }
-              }
-            },
-            (error) => {
-              console.error("WebSocket error:", error);
-              if (isSubscribed) {
-                setIsWSConnected(false);
-              }
-            }
-          );
-          if (isSubscribed) {
-            setIsWSConnected(true);
-          }
-        }
-      } catch (error) {
-        console.error("Failed initializeWebSocket:", error);
-        if (isSubscribed) {
-          setIsWSConnected(false);
-        }
-      }
-    };
-
-    initializeWebSocket();
-
-    return () => {
-      isSubscribed = false;
-      AiChatApi.disconnect();
-    };
-  }, [userId, isWSConnected]);
 
   useEffect(() => {
     if (
@@ -131,8 +70,11 @@ export const useVoiceInput = ({
    */
   const playAIResponse = async (text: string) => {
     try {
+      // 音声を合成して、Blob を取得する。
       const audioBlob = await VoiceVoxApi.synthesizeSpeech(text);
+      // Blob を URL に変換する。
       const audioUrl = URL.createObjectURL(audioBlob);
+      // 音声インスタンス & 再生する。
       const audio = new Audio(audioUrl);
       await audio.play();
 
@@ -156,35 +98,31 @@ export const useVoiceInput = ({
       setIsListening(false);
 
       try {
-        // WebSocketが接続されていない場合は再接続を試みる
-        if (!isWSConnected) {
-          await AiChatApi.connect(async (response) => {
-            if (response.type === "text") {
-              await createAIMessage(userId, response.content);
-            } else if (response.type === "speech") {
-              const audio = new Audio(
-                `data:audio/wav;base64,${response.content}`
-              );
-              await audio.play();
-            }
-          });
-          setIsWSConnected(true);
-        }
-
-        // ユーザーメッセージを保存
+        // AIメッセージを受信してから、ユーザーメッセージを保存する。
+        // ai-chat エンドポイント内で、会話履歴を取得しているため、先に保存すると、今の質問に対する判断が正しくできなくなる。
         await createUserMessage(userId);
 
-        // WebSocketを通じてメッセージを送信
-        await AiChatApi.sendMessage(voiceInputMsg);
+        setAiThinking(true); // AIを思考中にする。
+        // AIにメッセージを送信する。
+        const aiMessage: AiChatMessageRes = await AiChatApi.sendMessage({
+          userId: userId,
+          userQuery: voiceInputMsg,
+        });
+        setAiThinking(false); // AIの思考を完了にする。
+
+        // 会話履歴を、再度取得する。
+        await fetchMessages(userId);
+
+        // AIメッセージを再生する。
+        await playAIResponse(aiMessage.aiMessage);
       } catch (error) {
         console.error("Error in toggleListening:", error);
-        setIsWSConnected(false);
       }
     } else {
       recognition.start();
       setIsListening(true);
     }
-  }, [isListening, recognition, voiceInputMsg, isWSConnected, userId]);
+  }, [isListening, recognition, voiceInputMsg, userId]);
 
   /**
    * 明示的に会話を終了させる
@@ -199,7 +137,6 @@ export const useVoiceInput = ({
 
   return {
     isListening,
-    isWSConnected,
     toggleListening,
     stopConversation,
   };

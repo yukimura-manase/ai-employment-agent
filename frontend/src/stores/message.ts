@@ -7,6 +7,7 @@ import { create } from "zustand";
 interface MessageStates {
   messages: MessageRes[];
   voiceInputMsg: string; // 音声入力のテキスト
+  isAiThinking: boolean; // AIが考え中かどうか（AIの回答中は、音声入力を受け付けない）
 }
 
 interface MessageActions {
@@ -14,7 +15,7 @@ interface MessageActions {
   setVoiceInputMsg: (voiceInputMsg: string) => void;
   fetchMessages: (userId: string) => Promise<void>;
   createUserMessage: (userId: string) => Promise<void>;
-  createAIMessage: (userId: string, content: string) => Promise<void>;
+  setAiThinking: (isAiThinking: boolean) => void;
 }
 
 /**
@@ -34,6 +35,7 @@ export const useMessageStates = create<MessageStates & MessageActions>()(
       },
     ],
     voiceInputMsg: "",
+    isAiThinking: false, // AIが考え中かどうか（AIの回答中は、音声入力を受け付けない）
 
     // ------------------------- Actions -------------------------
     setMessages: (messages: MessageRes[]) => set({ messages }),
@@ -102,33 +104,11 @@ export const useMessageStates = create<MessageStates & MessageActions>()(
       }
     },
 
-    createAIMessage: async (userId: string, content: string) => {
-      try {
-        const copyMessages = useMessageStates.getState().messages;
-
-        // AIメッセージをStoreに保存
-        set({
-          messages: [
-            ...copyMessages,
-            {
-              userId: userId,
-              messageId: randomUUID(),
-              content: content,
-              sender: "AI",
-              createdAt: new Date().toISOString(),
-            },
-          ],
-        });
-
-        // AIメッセージをDBに保存
-        await MessageApi.createMessage({
-          userId,
-          sender: "AI",
-          content: content,
-        });
-      } catch (error) {
-        console.error(error);
-      }
+    /**
+     * AIが回答を思考中かどうかを切り替える。
+     */
+    setAiThinking: (isAiThinking: boolean) => {
+      set(() => ({ isAiThinking: isAiThinking }));
     },
   })
 );
