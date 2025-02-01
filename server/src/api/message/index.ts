@@ -24,6 +24,7 @@ messageRouter.post("/", async (context) => {
     // 特定Userに紐づく、Messageをすべて取得する。
     const messages: Message[] = await prisma.message.findMany({
       where: { userId },
+      orderBy: { createdAt: "asc" }, // 作成日時の順番で取得する。
     });
 
     return context.json(messages);

@@ -1,3 +1,3 @@
 export interface AiChatMessageRes {
-  aiMessage: string;
+  aiAnswer: string;
 }

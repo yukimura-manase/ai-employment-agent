@@ -70,8 +70,11 @@ export const useVoiceInput = ({
    */
   const playAIResponse = async (text: string) => {
     try {
+      console.log("text", text);
+
       // 音声を合成して、Blob を取得する。
       const audioBlob = await VoiceVoxApi.synthesizeSpeech(text);
+      console.log("audioBlob", audioBlob);
       // Blob を URL に変換する。
       const audioUrl = URL.createObjectURL(audioBlob);
       // 音声インスタンス & 再生する。
@@ -108,13 +111,14 @@ export const useVoiceInput = ({
           userId: userId,
           userQuery: voiceInputMsg,
         });
+        console.log("aiMessage", aiMessage);
         setAiThinking(false); // AIの思考を完了にする。
 
         // 会話履歴を、再度取得する。
         await fetchMessages(userId);
 
         // AIメッセージを再生する。
-        await playAIResponse(aiMessage.aiMessage);
+        await playAIResponse(aiMessage.aiAnswer);
       } catch (error) {
         console.error("Error in toggleListening:", error);
       }

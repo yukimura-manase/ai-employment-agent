@@ -18,6 +18,7 @@ export class VoiceVoxApi {
       }
     );
     const audioQuery = await queryResponse.json();
+    console.log("audioQuery", audioQuery);
 
     // 音声を合成
     const synthesisResponse = await fetch(
@@ -30,6 +31,8 @@ export class VoiceVoxApi {
         body: JSON.stringify(audioQuery),
       }
     );
+
+    console.log("synthesisResponse", synthesisResponse);
 
     return new Blob([await synthesisResponse.arrayBuffer()], {
       type: "audio/wav",
