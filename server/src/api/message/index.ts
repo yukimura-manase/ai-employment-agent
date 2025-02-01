@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type Message } from "@prisma/client";
 import { env } from "hono/adapter";
 
 export const messageRouter = new Hono();
@@ -22,7 +22,7 @@ messageRouter.post("/", async (context) => {
     });
 
     // 特定Userに紐づく、Messageをすべて取得する。
-    const messages = await prisma.message.findMany({
+    const messages: Message[] = await prisma.message.findMany({
       where: { userId },
     });
 
@@ -53,7 +53,7 @@ messageRouter.put("/", async (context) => {
     });
 
     // 新規Messageを登録する。
-    const newMessage = await prisma.message.create({
+    const newMessage: Message = await prisma.message.create({
       data: {
         userId,
         sender,
