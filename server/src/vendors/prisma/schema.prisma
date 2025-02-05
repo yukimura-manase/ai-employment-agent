@@ -159,7 +159,6 @@ model UserCurrentWork {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-
   // Relation
   user User @relation(fields: [userId], references: [userId])
   userWorkProfile UserWorkProfile @relation(fields: [userWorkProfileId], references: [userWorkProfileId])

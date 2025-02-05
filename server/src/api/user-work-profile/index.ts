@@ -9,6 +9,7 @@ import {
 } from "@prisma/client";
 import { env } from "hono/adapter";
 import type { CreateUserWorkProfileReq } from "@/types/user-work-profile/CreateUserWorkProfileReq.js";
+import type { UpdateUserWorkProfileReq } from "@/types/user-work-profile/UpdateUserWorkProfileReq.js";
 
 // toC UserWorkProfile Entity API Group
 export const userWorkProfileRouter = new Hono();
@@ -71,7 +72,7 @@ userWorkProfileRouter.post("/", async (context) => {
       },
     });
 
-    // 最初に、userWorkProfile を新規登録する。
+    // 最初に userWorkProfile を新規登録する。
     const newUserWorkProfile: UserWorkProfile =
       await prisma.userWorkProfile.create({
         data: {
@@ -137,4 +138,88 @@ userWorkProfileRouter.post("/", async (context) => {
 // UserWorkProfile 関連データの更新API: PUT /user-work-profiles
 userWorkProfileRouter.put("/", async (context) => {
   const { DATABASE_URL } = env<{ DATABASE_URL: string }>(context);
+
+  // 更新するデータを取得する。
+  const {
+    userWorkProfileId,
+    userId,
+    lastEducation,
+    userCareerHistories,
+    userSkills,
+    userCurrentWork,
+    userTargetWork,
+  } = await context.req.json<UpdateUserWorkProfileReq>();
+
+  try {
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: DATABASE_URL,
+        },
+      },
+    });
+
+    // 最初に userWorkProfile を更新する。
+    const updatedUserWorkProfile: UserWorkProfile =
+      await prisma.userWorkProfile.update({
+        where: { userWorkProfileId },
+        data: {
+          lastEducation,
+        },
+      });
+
+    // 続いて userCareerHistories, userSkills, userCurrentWork, userTargetWork
+    // などのデータが送られてきている場合は更新する。
+    let updatedUserCareerHistories: UserCareerHistory[] = [];
+    if (userCareerHistories) {
+      updatedUserCareerHistories = await Promise.all(
+        userCareerHistories.map((history) =>
+          prisma.userCareerHistory.update({
+            where: { userCareerHistoryId: history.userCareerHistoryId },
+            data: history,
+          })
+        )
+      );
+    }
+
+    let updatedUserSkills: UserSkill[] = [];
+    if (userSkills) {
+      updatedUserSkills = await Promise.all(
+        userSkills.map((skill) =>
+          prisma.userSkill.update({
+            where: { userSkillId: skill.userSkillId },
+            data: skill,
+          })
+        )
+      );
+    }
+
+    let updatedUserCurrentWork: UserCurrentWork | null = null;
+    if (userCurrentWork) {
+      updatedUserCurrentWork = await prisma.userCurrentWork.update({
+        where: { userCurrentWorkId: userCurrentWork.userCurrentWorkId },
+        data: userCurrentWork,
+      });
+    }
+
+    let updatedUserTargetWork: UserTargetWork | null = null;
+    if (userTargetWork) {
+      updatedUserTargetWork = await prisma.userTargetWork.update({
+        where: { userTargetWorkId: userTargetWork.userTargetWorkId },
+        data: userTargetWork,
+      });
+    }
+
+    // 更新したデータを返す。
+    return context.json({
+      userWorkProfile: updatedUserWorkProfile,
+      userCareerHistories: updatedUserCareerHistories,
+      userSkills: updatedUserSkills,
+      userCurrentWork: updatedUserCurrentWork,
+      userTargetWork: updatedUserTargetWork,
+    });
+  } catch (error) {
+    console.error(error);
+    return context.json({ error: "Internal Server Error" }, 500);
+  }
 });

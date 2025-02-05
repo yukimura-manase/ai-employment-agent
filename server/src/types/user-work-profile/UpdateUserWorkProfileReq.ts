@@ -2,26 +2,25 @@ import { WorkStyle } from "@prisma/client";
 
 /**
  * UserWorkProfile のリクエスト用型
- * - userId は既存ユーザーに対して必須など、ルールに合わせて調整してください。
- * - userCareerHistories / userSkills / userCurrentWork / userTargetWork は、
- *   必要に応じて部分更新する際は optional にする等調整が必要です。
+ *
+ * - 更新の場合は、基本的にOptional
  */
-export interface UserWorkProfileReq {
-  userWorkProfileId?: string; // 更新時は必要になることを想定
+export interface UpdateUserWorkProfileReq {
+  userWorkProfileId: string;
   userId: string;
+
   lastEducation: string;
-  userCareerHistories?: UserCareerHistoryReq[];
-  userSkills?: UserSkillReq[];
-  userCurrentWork?: UserCurrentWorkReq;
-  userTargetWork?: UserTargetWorkReq;
+  userCareerHistories?: UpdateUserCareerHistoryReq[];
+  userSkills?: UpdateUserSkillReq[];
+  userCurrentWork?: UpdateUserCurrentWorkReq;
+  userTargetWork?: UpdateUserTargetWorkReq;
 }
 
 /**
  * UserCareerHistory のリクエスト用型
- * - 更新時のみ ID を渡すなど、運用ルールに応じて調整してください
  */
-export interface UserCareerHistoryReq {
-  userCareerHistoryId?: string; // 更新時は必要になることを想定
+export interface UpdateUserCareerHistoryReq {
+  userCareerHistoryId: string;
   company: string;
   role: string;
   startDate: string | Date;
@@ -32,16 +31,16 @@ export interface UserCareerHistoryReq {
 /**
  * UserSkill のリクエスト用型
  */
-export interface UserSkillReq {
-  userSkillId?: string; // 更新時は必要になることを想定
+export interface UpdateUserSkillReq {
+  userSkillId: string;
   skillName: string;
 }
 
 /**
  * UserCurrentWork のリクエスト用型
  */
-export interface UserCurrentWorkReq {
-  userCurrentWorkId?: string; // 更新時は必要になることを想定
+export interface UpdateUserCurrentWorkReq {
+  userCurrentWorkId: string;
   currentIndustry: string;
   currentJobType: string;
   currentSalary: number;
@@ -53,8 +52,8 @@ export interface UserCurrentWorkReq {
 /**
  * UserTargetWork のリクエスト用型
  */
-export interface UserTargetWorkReq {
-  userTargetWorkId?: string;
+export interface UpdateUserTargetWorkReq {
+  userTargetWorkId: string;
   targetIndustry: string;
   targetJobType: string;
   targetJobContent: string;
