@@ -17,13 +17,23 @@ datasource db {
 
 /**
  * User Entity
+
+  - ユーザーの基本情報を管理するエンティティ。
  */
 model User {
   userId   String   @id @default(uuid(7)) // UUID v7を指定する。
   email     String   @unique
   name      String
   createdAt DateTime @default(now())
-  messages  Message[]
+  updatedAt DateTime @updatedAt @default(now())
+
+  // Relation関係
+  messages  Message[] // User:Message = 1:N の関係を持つ。
+  userWorkProfile UserWorkProfile? // User:UserWorkProfile = 1:1 の関係を持つ。(Optional)
+  userCareerHistories UserCareerHistory[] // User:UserCareerHistory = 1:N の関係を持つ。
+  userSkills UserSkill[] // User:UserSkill = 1:N の関係を持つ。
+  userCurrentWork UserCurrentWork? // User:UserCurrentWork = 1:1 の関係を持つ。(Optional)
+  userTargetWork UserTargetWork? // User:UserTargetWork = 1:1 の関係を持つ。(Optional)
 }
 
 // メッセージの送信者を特定するための列挙型
@@ -41,8 +51,145 @@ enum Sender {
 model Message {
   messageId String @id @default(uuid(7)) // UUID v7を指定する。
   userId    String
-  user      User   @relation(fields: [userId], references: [userId])
   sender    Sender // メッセージの送信者を特定するための列挙型
   content   String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
+  // Relation関係
+  user User @relation(fields: [userId], references: [userId]) // User:Message = 1:N の関係を持つ。
+}
+
+// 働き方に関する列挙型
+enum WorkStyle {
+  REMOTE // フルリモート
+  HYBRID // ハイブリッド
+  ONSITE // オフィス勤務
+  FREELANCE // フリーランス
+}
+
+/** 
+  * UserWorkProfile Entity
+
+  - ユーザーの仕事関連データを管理するエンティティ。
+  - User:UserWorkProfile = 1:1 の関係を持つ。
+  - UserWorkProfile:UserWorkProfileFormData = 1:1 の関係を持つ。
+ */ 
+model UserWorkProfile {
+  userWorkProfileId String @id @default(uuid(7))
+  userId String @unique // User:UserWorkProfile = 1:1 の関係を持つ。
+
+  // 最終学歴
+  lastEducation String   // TODO: 学歴のテーブルを作成する。
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation関係
+  user User @relation(fields: [userId], references: [userId]) // User:UserWorkProfile = 1:1 の関係を持つ。
+  userCareerHistories UserCareerHistory[] // UserWorkProfile:UserCareerHistory = 1:N の関係を持つ。
+  userSkills UserSkill[] // UserWorkProfile:UserSkill = 1:N の関係を持つ。
+  userCurrentWork UserCurrentWork? // UserWorkProfile:UserCurrentWork = 1:1 の関係を持つ。(Optional)
+  userTargetWork UserTargetWork? // UserWorkProfile:UserTargetWork = 1:1 の関係を持つ。(Optional)
+}
+
+
+/** 
+  * UserCareerHistory Entity
+
+  - ユーザーの職歴についての情報を管理するエンティティ。
+  - UserWorkProfile:UserCareerHistory = 1:N の関係を持つ。
+ */ 
+model UserCareerHistory {
+  userCareerHistoryId String   @id @default(uuid(7))
+  userId                  String
+  userWorkProfileId       String
+  company      String
+  role         String // 役割
+  startDate    DateTime // 在籍開始日
+  endDate      DateTime? // 在籍終了日
+  description  String? // 説明など
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation
+  user User @relation(fields: [userId], references: [userId])
+  userWorkProfile UserWorkProfile @relation(fields: [userWorkProfileId], references: [userWorkProfileId])
+}
+
+/** 
+  * UserSkill Entity
+
+  - ユーザーのスキルについての情報を管理するエンティティ。
+  - UserWorkProfile:UserSkill = 1:N の関係を持つ。
+ */ 
+model UserSkill {
+  userSkillId             String @id @default(uuid(7))
+  userId                  String
+  userWorkProfileId String
+  skillName      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation
+  user User @relation(fields: [userId], references: [userId])
+  userWorkProfile UserWorkProfile @relation(fields: [userWorkProfileId], references: [userWorkProfileId])
+}
+
+/** 
+  * UserCurrentWork Entity
+
+  - ユーザーの現在の働き方についての情報を管理するエンティティ。
+  - UserWorkProfile:UserCurrentWork = 1:1 の関係を持つ。
+ */ 
+model UserCurrentWork {
+  userCurrentWorkId String @id @default(uuid(7))
+  userId String @unique
+  userWorkProfileId String @unique
+
+  currentIndustry String // 今の業種・業界
+  currentJobType String // 今の職種
+  currentSalary Int // 今のお給料
+  currentCompany String // 今の会社
+  currentRole String // 今の会社の役割
+  currentWorkStyle WorkStyle // 今の働き方
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+
+  // Relation
+  user User @relation(fields: [userId], references: [userId])
+  userWorkProfile UserWorkProfile @relation(fields: [userWorkProfileId], references: [userWorkProfileId])
+}
+
+
+/** 
+  * UserTargetWork Entity
+
+  - ユーザーの目指す働き方についての情報を管理するエンティティ。
+  - UserWorkProfile:UserTargetWork = 1:1 の関係を持つ。
+ */ 
+model UserTargetWork {
+  userTargetWorkId  String @id @default(uuid(7))
+  userId String @unique
+  userWorkProfileId String @unique
+
+  targetIndustry String // 目指す業種・業界
+  targetJobType String // 目指す職業・職種
+  targetJobContent String // 目指す仕事内容
+  targetSalary Int // 目指すお給料
+  targetWorkStyle WorkStyle // 目指す働き方
+  targetCompany String // 目指す会社
+  targetRole String // 目指す会社の役割
+  targetOtherConditions String // その他の希望条件
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation
+  user User @relation(fields: [userId], references: [userId])
+  userWorkProfile UserWorkProfile @relation(fields: [userWorkProfileId], references: [userWorkProfileId])
 }
