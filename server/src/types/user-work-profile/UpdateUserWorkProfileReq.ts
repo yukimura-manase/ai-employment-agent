@@ -1,4 +1,4 @@
-import { WorkStyle } from "../UserWorkProfile";
+import { WorkStyle } from "@prisma/client";
 
 /**
  * UserWorkProfile のリクエスト用型

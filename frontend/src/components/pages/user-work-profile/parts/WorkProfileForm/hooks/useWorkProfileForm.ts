@@ -54,27 +54,33 @@ export const useWorkProfileForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      lastEducation: "",
+      lastEducation: "", // 必須入力
       careerHistory: [
-        { company: "", role: "", startDate: "", endDate: "", description: "" },
+        {
+          company: "", // 必須入力
+          role: "", // 必須入力
+          startDate: "", // 必須入力
+          endDate: "",
+          description: "",
+        },
       ],
       skills: [""],
       currentWork: {
-        currentIndustry: "",
-        currentJobType: "",
-        currentSalary: 0,
-        currentCompany: "",
-        currentRole: "",
-        currentWorkStyle: "REMOTE",
+        currentIndustry: "", // 必須入力
+        currentJobType: "", // 必須入力
+        currentSalary: 0, // 必須入力
+        currentCompany: "", // 必須入力
+        currentRole: "", // 必須入力
+        currentWorkStyle: "REMOTE", // 必須入力
       },
       targetWork: {
-        targetIndustry: "",
-        targetJobType: "",
-        targetJobContent: "",
-        targetSalary: 0,
-        targetWorkStyle: "REMOTE",
-        targetCompany: "",
-        targetRole: "",
+        targetIndustry: "", // 必須入力
+        targetJobType: "", // 必須入力
+        targetJobContent: "", // 必須入力
+        targetSalary: 0, // 必須入力
+        targetWorkStyle: "REMOTE", // 必須入力
+        targetCompany: "", // 必須入力
+        targetRole: "", // 必須入力
         targetOtherConditions: "",
       },
     },

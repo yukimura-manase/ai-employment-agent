@@ -80,7 +80,7 @@ model UserWorkProfile {
   userId String @unique // User:UserWorkProfile = 1:1 の関係を持つ。
 
   // 最終学歴
-  lastEducation String   // TODO: 学歴のテーブルを作成する。
+  lastEducation String   // TODO: 後で学歴のテーブルを作成する。
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -104,8 +104,8 @@ model UserCareerHistory {
   userCareerHistoryId String   @id @default(uuid(7))
   userId                  String
   userWorkProfileId       String
-  company      String
-  role         String // 役割
+  company      String // 会社名
+  role         String // 役職・役割
   startDate    DateTime // 在籍開始日
   endDate      DateTime? // 在籍終了日
   description  String? // 説明など
@@ -128,7 +128,7 @@ model UserSkill {
   userSkillId             String @id @default(uuid(7))
   userId                  String
   userWorkProfileId String
-  skillName      String
+  skillName      String // スキル名
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -151,7 +151,7 @@ model UserCurrentWork {
 
   currentIndustry String // 今の業種・業界
   currentJobType String // 今の職種
-  currentSalary Int // 今のお給料
+  currentSalary Int? // 今のお給料
   currentCompany String // 今の会社
   currentRole String // 今の会社の役割
   currentWorkStyle WorkStyle // 今の働き方
@@ -180,11 +180,11 @@ model UserTargetWork {
   targetIndustry String // 目指す業種・業界
   targetJobType String // 目指す職業・職種
   targetJobContent String // 目指す仕事内容
-  targetSalary Int // 目指すお給料
-  targetWorkStyle WorkStyle // 目指す働き方
-  targetCompany String // 目指す会社
-  targetRole String // 目指す会社の役割
-  targetOtherConditions String // その他の希望条件
+  targetSalary Int? // 目指すお給料
+  targetWorkStyle WorkStyle? // 目指す働き方
+  targetCompany String? // 目指す会社
+  targetRole String? // 目指す会社の役割
+  targetOtherConditions String? // その他の希望条件
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
