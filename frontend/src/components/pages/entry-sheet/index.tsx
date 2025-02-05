@@ -2,24 +2,23 @@ import { BasicLayout } from "@/components/layouts/basic-layout";
 import { Button } from "@/components/shared/ui-elements/button";
 import { useUserStates } from "@/stores/user";
 import { useRouter } from "next/router";
-import { ChatBox } from "./parts/chat-box";
 import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/shared/ui-elements/sidebar";
 import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
 
-export const TalkRoomPage = () => {
+export const EntrySheetPage = () => {
   const { user } = useUserStates();
   const router = useRouter();
 
-  // ログインしていない場合は、Topページにリダイレクトする。
-  if (!user) {
-    router.push("/");
-    return;
-  }
+  console.log("EntrySheetPage", user);
 
-  console.log("TalkRoomPage", user);
+  // ログインしていない場合は、Topページにリダイレクトする。
+  // if (!user) {
+  //   router.push("/");
+  //   return;
+  // }
 
   return (
     <BasicLayout>
@@ -28,8 +27,8 @@ export const TalkRoomPage = () => {
         <SidebarTrigger />
         {/* 会話 */}
         <section className="w-full h-full flex flex-col gap-3 items-center justify-center">
-          <div>
-            <ChatBox user={user} />
+          <div className="container mx-auto py-10">
+            <h1 className="text-2xl font-bold mb-5">エントリーシート作成</h1>
           </div>
 
           <div className="mt-5">
