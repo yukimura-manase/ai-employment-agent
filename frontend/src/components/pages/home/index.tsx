@@ -26,9 +26,17 @@ export const HomePage = () => {
         {user && (
           <div className="flex flex-col gap-3 items-center">
             <p>ようこそ、{user.name}さん</p>
-            <Button onClick={() => router.push("/talk-room")}>
-              就活AIと会話を始める！
-            </Button>
+            <div className="flex gap-3 items-center">
+              <Button onClick={() => router.push("/talk-room")}>
+                就活AIと会話を始める！
+              </Button>
+              <Button onClick={() => router.push("/user-work-profile")}>
+                プロフィールを作成する📝
+              </Button>
+              <Button onClick={() => router.push("/talk-room")}>
+                求人を検索する🔍
+              </Button>
+            </div>
           </div>
         )}
       </section>

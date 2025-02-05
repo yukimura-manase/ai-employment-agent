@@ -14,15 +14,13 @@ export interface UserWorkProfile {
 }
 
 /**
- * 働き方の種類を表す enum の例
- * （バックエンドと合わせる必要があります）
+ * 働き方の種類を表す enum
  */
 export enum WorkStyle {
-  FULL_TIME = "FULL_TIME",
-  PART_TIME = "PART_TIME",
-  CONTRACT = "CONTRACT",
-  FREELANCE = "FREELANCE",
-  OTHER = "OTHER",
+  REMOTE = "REMOTE", // フルリモート
+  HYBRID = "HYBRID", // ハイブリッド
+  ONSITE = "ONSITE", // 契約社員
+  FREELANCE = "FREELANCE", // フリーランス
 }
 
 /**

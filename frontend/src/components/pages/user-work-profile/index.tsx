@@ -31,9 +31,9 @@ export const UserWorkProfilePage = () => {
         <AppSidebar />
         <SidebarTrigger />
         {/* 会話 */}
-        <section className="w-full h-full flex flex-col gap-3 items-center justify-center">
-          <div className="container mx-auto py-10">
-            <h1 className="text-2xl font-bold mb-5">User Work Profile</h1>
+        <section className="w-full h-full flex flex-col gap-3 items-center justify-center my-5">
+          <div className="container mx-auto py-10 w-[80%]">
+            <h1 className="text-2xl font-bold mb-5">就活プロフィール情報📝</h1>
             <WorkProfileForm />
           </div>
 
