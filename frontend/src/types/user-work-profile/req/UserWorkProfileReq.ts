@@ -11,9 +11,9 @@ export interface UserWorkProfileReq {
   userId: string;
   lastEducation: string;
   userCareerHistories?: UserCareerHistoryReq[];
-  userSkills?: UserSkillReq[];
-  userCurrentWork?: UserCurrentWorkReq;
-  userTargetWork?: UserTargetWorkReq;
+  // userSkills?: UserSkillReq[];
+  // userCurrentWork?: UserCurrentWorkReq;
+  // userTargetWork?: UserTargetWorkReq;
 }
 
 /**

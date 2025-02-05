@@ -8,11 +8,14 @@ import { WorkStyle } from "../UserWorkProfile";
 export interface CreateUserWorkProfileReq {
   userId: string;
 
-  lastEducation: string; // 最終学歴
-  userCareerHistories: CreateUserCareerHistoryReq[]; // 職務経歴
-  userSkills: CreateUserSkillReq[]; // スキル
+  // 必須項目
   userCurrentWork: CreateUserCurrentWorkReq; // 現在の職業
   userTargetWork: CreateUserTargetWorkReq; // 目標の職業
+  // userSkills: CreateUserSkillReq[]; // スキル
+
+  // 任意項目
+  // lastEducation?: string; // 最終学歴
+  // userCareerHistories?: CreateUserCareerHistoryReq[]; // 職務経歴
 }
 
 /**

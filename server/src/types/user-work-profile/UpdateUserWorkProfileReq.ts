@@ -9,11 +9,14 @@ export interface UpdateUserWorkProfileReq {
   userWorkProfileId: string;
   userId: string;
 
-  lastEducation: string;
-  userCareerHistories?: UpdateUserCareerHistoryReq[];
-  userSkills?: UpdateUserSkillReq[];
-  userCurrentWork?: UpdateUserCurrentWorkReq;
-  userTargetWork?: UpdateUserTargetWorkReq;
+  // 必須項目
+  userCurrentWork: UpdateUserCurrentWorkReq; // 現在の職業
+  userTargetWork: UpdateUserTargetWorkReq; // 目標の職業
+  // userSkills: UpdateUserSkillReq[]; // スキル
+
+  // 任意項目
+  // lastEducation?: string; // 最終学歴
+  // userCareerHistories?: CreateUserCareerHistoryReq[]; // 職務経歴
 }
 
 /**

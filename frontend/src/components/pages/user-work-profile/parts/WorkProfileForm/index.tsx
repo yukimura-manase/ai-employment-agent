@@ -277,7 +277,7 @@ export function WorkProfileForm() {
         </section>
 
         {/* スキル Section */}
-        <section className="space-y-4">
+        {/* <section className="space-y-4">
           <h2 className="text-xl font-bold">スキル</h2>
           {form.watch("skills").map((_, index) => (
             <FormField
@@ -305,12 +305,12 @@ export function WorkProfileForm() {
             <CirclePlusIcon className="w-4 h-4" />
             スキルを追加する
           </Button>
-        </section>
+        </section> */}
 
         {/* 職務経歴 Section */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-bold">職務経歴 (任意)</h2>
-          {form.watch("careerHistory").map((_, index) => (
+        {/* <section className="space-y-4"> */}
+        {/* <h2 className="text-xl font-bold">職務経歴 (任意)</h2> */}
+        {/* {form.watch("careerHistory").map((_, index) => (
             <div key={index} className="space-y-4">
               <h3 className="text-lg font-bold">会社 {index + 1}</h3>
               <FormField
@@ -379,10 +379,10 @@ export function WorkProfileForm() {
                 )}
               />
             </div>
-          ))}
+          ))} */}
 
-          {/* 職務経歴を追加するボタン */}
-          <Button
+        {/* 職務経歴を追加するボタン */}
+        {/* <Button
             type="button"
             variant="outline"
             onClick={() =>
@@ -400,11 +400,11 @@ export function WorkProfileForm() {
           >
             <CirclePlusIcon className="w-4 h-4" />
             職務経歴を追加する
-          </Button>
-        </section>
+          </Button> */}
+        {/* </section> */}
 
         {/* 学歴 Section */}
-        <section className="space-y-4">
+        {/* <section className="space-y-4">
           <h2 className="text-xl font-bold">学歴 (任意)</h2>
           <FormField
             control={form.control}
@@ -419,10 +419,10 @@ export function WorkProfileForm() {
               </FormItem>
             )}
           />
-        </section>
+        </section> */}
 
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "送信中..." : "プロフィールを作成する"}
+          {isSubmitting ? "送信中..." : "プロフィールを更新する"}
         </Button>
       </form>
     </Form>
