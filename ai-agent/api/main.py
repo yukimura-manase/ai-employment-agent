@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routers.aiChat import router as aiChatRouter  # モジュールではなく、router オブジェクトをインポート
-from api.routers.search_offers import router as searchOffersRouter
+from api.routers.job_searcher import router as jobSearchRouter
 from api.routers.sheet_generator import router as entrysheetRouter
 
 
@@ -24,6 +24,6 @@ async def hello():
 
 # APIRouterのインスタンスを include_router に渡す。
 app.include_router(aiChatRouter)
-app.include_router(searchOffersRouter)
+app.include_router(jobSearchRouter)
 app.include_router(entrysheetRouter)
 

@@ -1,7 +1,7 @@
 from models.user import UserProfile
 
 # サンプル
-# 実際はもっとしっかりしたロジックになる
+# 実際はしっかりしたロジックをつなぎこむ
 def generate_information_sheet(profile: UserProfile) -> str:
     """
     ユーザーの経歴情報からシンプルな情報シート（テキスト形式）を生成する例
