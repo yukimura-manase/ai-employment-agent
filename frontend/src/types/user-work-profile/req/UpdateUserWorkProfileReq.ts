@@ -1,25 +1,26 @@
 import { WorkStyle } from "../UserWorkProfile";
 
 /**
- * UserWorkProfile の Create Req
+ * UserWorkProfile のリクエスト用型
  *
- * - 初回登録時は、DB Recordを作成するために、すべて必須。
+ * - 更新の場合は、基本的にOptional
  */
-export interface CreateUserWorkProfileReq {
+export interface UpdateUserWorkProfileReq {
+  userWorkProfileId: string;
   userId: string;
 
-  lastEducation: string; // 最終学歴
-  userCareerHistories: CreateUserCareerHistoryReq[]; // 職務経歴
-  userSkills: CreateUserSkillReq[]; // スキル
-  userCurrentWork: CreateUserCurrentWorkReq; // 現在の職業
-  userTargetWork: CreateUserTargetWorkReq; // 目標の職業
+  lastEducation: string;
+  userCareerHistories?: UpdateUserCareerHistoryReq[];
+  userSkills?: UpdateUserSkillReq[];
+  userCurrentWork?: UpdateUserCurrentWorkReq;
+  userTargetWork?: UpdateUserTargetWorkReq;
 }
 
 /**
- * 職務経歴 のリクエスト用型
- *
+ * UserCareerHistory のリクエスト用型
  */
-export interface CreateUserCareerHistoryReq {
+export interface UpdateUserCareerHistoryReq {
+  userCareerHistoryId: string;
   company: string;
   role: string;
   startDate: string | Date;
@@ -28,16 +29,18 @@ export interface CreateUserCareerHistoryReq {
 }
 
 /**
- * スキル のリクエスト用型
+ * UserSkill のリクエスト用型
  */
-export interface CreateUserSkillReq {
+export interface UpdateUserSkillReq {
+  userSkillId: string;
   skillName: string;
 }
 
 /**
- * 現在の職業 のリクエスト用型
+ * UserCurrentWork のリクエスト用型
  */
-export interface CreateUserCurrentWorkReq {
+export interface UpdateUserCurrentWorkReq {
+  userCurrentWorkId: string;
   currentIndustry: string;
   currentJobType: string;
   currentSalary: number;
@@ -47,9 +50,10 @@ export interface CreateUserCurrentWorkReq {
 }
 
 /**
- * 目標の職業 のリクエスト用型
+ * UserTargetWork のリクエスト用型
  */
-export interface CreateUserTargetWorkReq {
+export interface UpdateUserTargetWorkReq {
+  userTargetWorkId: string;
   targetIndustry: string;
   targetJobType: string;
   targetJobContent: string;
@@ -57,5 +61,5 @@ export interface CreateUserTargetWorkReq {
   targetWorkStyle: WorkStyle;
   targetCompany: string;
   targetRole: string;
-  targetOtherConditions?: string;
+  targetOtherConditions: string;
 }

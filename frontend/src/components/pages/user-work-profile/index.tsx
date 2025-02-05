@@ -1,7 +1,6 @@
 import { WorkProfileForm } from "./parts/WorkProfileForm";
 import { BasicLayout } from "@/components/layouts/basic-layout";
 import { Button } from "@/components/shared/ui-elements/button";
-import { useUserStates } from "@/stores/user";
 import { useRouter } from "next/router";
 import {
   SidebarProvider,
@@ -16,14 +15,7 @@ import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
  * - プロフィールの編集ができる。
  */
 export const UserWorkProfilePage = () => {
-  const { user } = useUserStates();
   const router = useRouter();
-
-  // ログインしていない場合は、Topページにリダイレクトする。
-  // if (!user) {
-  //   router.push("/");
-  //   return;
-  // }
 
   return (
     <BasicLayout>

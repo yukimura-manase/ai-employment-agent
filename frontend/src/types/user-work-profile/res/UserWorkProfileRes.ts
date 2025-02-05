@@ -1,5 +1,4 @@
 import {
-  WorkStyle,
   UserCareerHistory,
   UserSkill,
   UserCurrentWork,
@@ -34,13 +33,3 @@ export interface UserWorkProfileRes {
     updatedAt: string;
   };
 }
-
-/*
-  もしシンプルに同じインターフェースを使いたい場合は、
-  UserWorkProfileRes = UserWorkProfile そのまま（createdAt/updatedAt を string | Date に統一）
-  としてしまっても OK です。
-
-  ただし、バックエンドが文字列で返してくる createdAt / updatedAt を
-  そのまま string にするのか、それを受け取り次第フロントで Date に変換するのかは
-  プロジェクトのルールに合わせて使い分けてください。
-*/
