@@ -1,9 +1,12 @@
-version: "3"
 services:
   ai-agent:
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - SUPABASE_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
     build: .
     volumes:
-      - .dockervenv:/src/.venv
-      - .:/src
+      - ./api:/src/api  # ディレクトリ部分のみマウントする。よい方法があれば変更
+      - ./models:/src/models  
     ports:
       - 8000:8000 # ホストマシンのポート8000を、docker内のポート8000に接続する
