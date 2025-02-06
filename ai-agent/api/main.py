@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routers.aiChat import router as aiChatRouter  # モジュールではなく、router オブジェクトをインポート
-from api.routers.job_searcher import router as jobSearchRouter
-from api.routers.sheet_generator import router as entrysheetRouter
+from api.routers.job_search import router as jobSearchRouter
+from api.routers.entrysheet import router as entrysheetRouter
 
 
 # FastAPIのインスタンス。uvicornを通してこのファイルの app インスタンスが参照する。
