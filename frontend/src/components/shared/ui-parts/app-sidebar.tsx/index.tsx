@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Home, Search } from "lucide-react";
 
 import {
   Sidebar,
@@ -6,39 +6,40 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
 } from "@/components/shared/ui-elements/sidebar";
+import { RiRobot2Line } from "react-icons/ri";
+import { ImProfile } from "react-icons/im";
+import { IoMdPaper } from "react-icons/io";
 
-// Menu items.
+// Sidebar Menu items.
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "AI就活エージェントとの会話",
+    url: "/talk-room",
+    icon: RiRobot2Line,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
+    title: "就活プロフィール",
+    url: "/user-work-profile",
+    icon: ImProfile,
   },
   {
-    title: "Search",
-    url: "#",
+    title: "エントリーシート作成",
+    url: "/entry-sheet",
+    icon: IoMdPaper,
+  },
+  {
+    title: "求人検索",
+    url: "/job-search",
     icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
   },
 ];
 
@@ -46,8 +47,9 @@ export const AppSidebar = () => {
   return (
     <Sidebar>
       <SidebarContent>
+        <div className="h-[80px]"></div>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>アプリ・メニュー</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
