@@ -19,8 +19,6 @@ export const TalkRoomPage = () => {
     return;
   }
 
-  console.log("TalkRoomPage", user);
-
   return (
     <BasicLayout>
       <SidebarProvider>

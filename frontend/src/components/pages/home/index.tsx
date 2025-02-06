@@ -33,7 +33,7 @@ export const HomePage = () => {
               <Button onClick={() => router.push("/user-work-profile")}>
                 プロフィールを作成する📝
               </Button>
-              <Button onClick={() => router.push("/talk-room")}>
+              <Button onClick={() => router.push("/job-search")}>
                 求人を検索する🔍
               </Button>
             </div>
