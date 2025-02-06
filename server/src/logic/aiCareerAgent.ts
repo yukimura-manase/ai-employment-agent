@@ -1,50 +1,42 @@
-import type { Message } from "@prisma/client";
+import type { Message, UserWorkProfile } from "@prisma/client";
 
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import type { UserWorkProfileRes } from "@/types/user-work-profile/UserWorkProfileRes.js";
 
 /**
- * AIキャリア・アドバイザーのシステムプロンプト(人格設定)
+ * AIキャリア・コンサルタントのシステムプロンプト(人格設定)
  */
 export const createSystemPrompt = ({
   userQuery,
   aiAnswer,
+  userWorkProfile,
 }: {
   userQuery: string;
   aiAnswer: string;
+  userWorkProfile: string;
 }): string => {
   return `
-    あなたは、就職活動・転職活動の相談のプロである、キャリア・アドバイザーです。
+    あなたは、就職活動・転職活動の相談のプロである、キャリア・コンサルタントです。
     また、あなたは、以下の制約条件と回答条件を厳密に守る必要があります。
 
     制約条件:
-    * あなたは、就職活動・転職活動の相談のプロである、キャリア・アドバイザーであり、それ以外の質問には回答しません。
-    * あなたは、お客さんにとって有益な回答をするために、適切にヒアリングを行います。
+    * あなたは、就職活動・転職活動の相談のプロである、キャリア・コンサルタントであり、お客さんの就職・転職活動に関する質問にのみ回答します。
+    * あなたは、お客さんにとって有益な回答をするために、情報から最適な就職・転職のアドバイスを行います。
+    * お客さんのとの会話データ(Log)がある場合は、その情報を参考に質問や回答を考えてください。
+    * お客さんの就活プロフィール情報がある場合は、その情報を参考に質問や回答を考えてください。
     * ヒアリングすべき内容は、「ヒアリング内容・質問すべき内容」にまとめたとおりです。
     * ヒアリングすべき内容は、必ず質問してください。すでに質問されている内容については、質問しなくても構いません。
-    * お客さんからヒアリングすべき内容、必要な情報をすべて聞き取ってください。
+    * ヒアリングすべき内容以外でも、お客さんにとって有益な回答をするために、質問してください。
   
     ヒアリング内容・質問すべき内容:
-    1. お客さんの就職・転職を目指す業種・業界を理解する質問。
-      - 例) どんな業種・業界を目指していますか？
-    2. お客さんの目指す職業・職種を理解する質問。
-      - 例) どんな職業・職種を目指していますか？
-    3. お客さんの就職・転職先に対する希望条件を理解する。
-      - 仕事内容
-        - 例) どんな仕事内容が希望ですか？
-      - 給与
-        - 例) お給料は、いくらくらい希望していますか？
-      - 働き方
-        - 例) どんな働き方を希望していますか？ (リモートワーク、フレックス勤務、フルタイム、パートタイム、フリーランス、その他など)
-    4. お客さんの学歴
-      - 例) 学歴について、教えてください。
-    5. お客さんの職歴をヒアリングする。
-      - 例) 職歴について、教えてください。
-    6. お客さんの仕事で活かせるスキルをヒアリングする。
-      - 例) 仕事で活かせるスキルについて、教えてください。
-    7. お客さんのその他の希望条件をヒアリングする。
-      - 例) その他の希望条件について、何かあれば、教えてください。
+    1. お客さんの就職・転職をする理由についてヒアリングする。
+      - 例) どんな理由で、就職・転職をすることを考えていますか？
+    2. お客さんの転職で譲れない条件についてヒアリングする。
+      - 例) 転職で譲れない条件について、教えてください。
+    3. お客さんの仕事で活かせるスキルをヒアリングする。
+      - 例) 仕事で活かせるスキルについて、教えてください。    
 
     回答条件:
     * 丁寧な接客を心がけてください。
@@ -52,11 +44,14 @@ export const createSystemPrompt = ({
     * ヒアリング内容・質問すべき内容を、必ず質問してください。
     * 回答に、お客さんのとの会話データ(Log)を含める必要はありません。
     * 1.などの番号や、ex) などのような、内容を回答には含めないでください。
+    * ヒアリングすべき内容以外でも、お客さんにとって有益な回答をするために、質問してください。
     * 回答は、120文字以内で、簡潔にお願いします。
 
     お客さんのとの会話データ(Log):
     * お客さんの話しかけた内容: ${userQuery}
     * あなたの回答: ${aiAnswer}
+
+    ${userWorkProfile}
   `;
 };
 
@@ -89,6 +84,86 @@ export const createPromptTemplate = (
 };
 
 /**
+ * ユーザーの就活プロフィール情報のキーを、日本語に翻訳する。
+ */
+const keyTranslate = {
+  // 現在の仕事に関するプロフィール情報
+  currentIndustry: "現在の業界",
+  currentJobType: "現在の職業",
+  currentSalary: "現在の給与",
+  currentCompany: "現在の会社",
+  currentRole: "現在の役割",
+  currentWorkStyle: "現在の働き方",
+
+  // 目指す仕事に関するプロフィール情報
+  targetIndustry: "目標の業界",
+  targetJobType: "目標の職業",
+  targetJobContent: "目標の仕事内容",
+  targetSalary: "目標の給与",
+  targetWorkStyle: "目標の働き方",
+  targetCompany: "目標の会社",
+  targetRole: "目標の役割",
+  targetOtherConditions: "目標のその他の条件",
+};
+
+/**
+ * ユーザーの就活プロフィール情報を、JSON形式でフォーマットする。
+ *
+ * 余計な情報は、非表示にする。
+ */
+const formatUserWorkProfilePrompt = (
+  userWorkProfile: UserWorkProfileRes | null
+): string => {
+  if (!userWorkProfile) {
+    return "";
+  }
+  const { userCurrentWork, userTargetWork } = userWorkProfile;
+
+  const formatMatter = (target: object, excludeKeys: string[]): string => {
+    const formattedStr = Object.entries(target)
+      .map(([key, value]) => {
+        // 値がない場合は、非表示にする。
+        if (!value) {
+          return;
+        }
+        // 余計な情報は、非表示にする。(id系, 作成日時, 更新日時など)
+        if (excludeKeys.includes(key)) {
+          return;
+        }
+        // key: value の形式にフォーマットする。(keyは、日本語に翻訳する)
+        return `${keyTranslate[key as keyof typeof keyTranslate]}: ${value}`;
+      })
+      .filter((value) => value !== undefined) // undefined は、除外する。
+      .join("\n");
+
+    return formattedStr;
+  };
+
+  // userCurrentWork を 1つずつ key: value の形式で表示する。
+  // ただし、ユーザーIDは、セキュリティのため、非表示にする。
+  const userCurrentWorkStr = formatMatter(userCurrentWork, [
+    "userId",
+    "userWorkProfileId",
+    "createdAt",
+    "updatedAt",
+  ]);
+
+  // userTargetWork を 1つずつ key: value の形式で表示する。
+  const userTargetWorkStr = formatMatter(userTargetWork, [
+    "userId",
+    "userWorkProfileId",
+    "createdAt",
+    "updatedAt",
+  ]);
+
+  return `
+    お客さんの就活プロフィール情報: 
+    * 現在の仕事: ${userCurrentWorkStr}
+    * 目指す仕事: ${userTargetWorkStr}
+  `;
+};
+
+/**
  * AI就活エージェント
  *
  * - 会話履歴と、最新メッセージを結合して、GeminiLangChainに渡す。
@@ -97,9 +172,11 @@ export const createPromptTemplate = (
 export const aiCareerAgent = async (
   apiKey: string,
   historyMessages: Message[],
-  latestMessage: string
+  latestMessage: string,
+  userWorkProfile: UserWorkProfileRes | null // 就活プロフィール情報
 ) => {
   console.log("aiCareerAgent Start");
+  console.log("userWorkProfile", userWorkProfile);
 
   // ユーザーの会話データを結合する。
   const userMessagesStr: string = historyMessages
@@ -113,10 +190,13 @@ export const aiCareerAgent = async (
     .map((message) => message.content)
     .join("\n");
 
+  const userWorkProfilePrompt = formatUserWorkProfilePrompt(userWorkProfile);
+
   // システムプロンプトを作成する。
   const systemPrompt: string = createSystemPrompt({
     userQuery: userMessagesStr,
     aiAnswer: aiMessagesStr,
+    userWorkProfile: userWorkProfilePrompt,
   });
   console.log("systemPrompt", systemPrompt);
 

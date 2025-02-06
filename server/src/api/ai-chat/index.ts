@@ -1,7 +1,12 @@
 import { Hono } from "hono";
 import { env } from "hono/adapter";
-import { PrismaClient, type Message } from "@prisma/client";
+import {
+  PrismaClient,
+  type Message,
+  type UserWorkProfile,
+} from "@prisma/client";
 import { aiCareerAgent } from "@/logic/aiCareerAgent.js";
+import type { UserWorkProfileRes } from "@/types/user-work-profile/UserWorkProfileRes.js";
 
 export const aiChatRouter = new Hono();
 
@@ -32,11 +37,25 @@ aiChatRouter.post("/", async (context) => {
       orderBy: { createdAt: "asc" }, // 作成日時の順番で取得する。
     });
 
+    /**
+     * 特定Userに紐づく、UserWorkProfileを取得する。
+     *
+     * - UserWorkProfile に紐づいている UserCurrentWork, UserTargetWork も取得する。
+     */
+    const userWorkProfile = (await prisma.userWorkProfile.findUnique({
+      where: { userId },
+      include: {
+        userCurrentWork: true,
+        userTargetWork: true,
+      },
+    })) as UserWorkProfileRes | null;
+
     // 会話履歴から、AIの回答を取得する。
     const aiAnswer: string = await aiCareerAgent(
       GEMINI_API_KEY,
       historyMessages,
-      userQuery
+      userQuery,
+      userWorkProfile
     );
 
     // 回答をDBに保存する。
