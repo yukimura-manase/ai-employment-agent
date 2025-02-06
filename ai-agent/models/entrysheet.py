@@ -16,7 +16,7 @@ class EntrySheetInput(BaseModel):  # 詳細は下記のコメントを参照
             if not isinstance(inner, dict):
                 raise ValueError(f"Value for key '{key}' must be a dict")
             # 内包する辞書が "type" キーのみを含むことをチェック
-            if list(inner.keys()) != ["type"]:
+            if set(inner.keys()) != {"type"}:
                 raise ValueError(
                     f"Inner dict for key '{key}' must contain only the 'type' key."
                 )
