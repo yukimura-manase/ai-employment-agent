@@ -18,9 +18,10 @@ import {
 import { Textarea } from "@/components/shared/ui-elements/textarea";
 
 import { useWorkProfileForm } from "./hooks/useWorkProfileForm";
-import { CircleFadingPlusIcon, CirclePlusIcon, PlusIcon } from "lucide-react";
 import { useUserStates } from "@/stores/user";
 import { useRouter } from "next/router";
+import { useWorkProfile } from "../../hooks/useWorkProfile";
+import { Loading } from "@/components/shared/ui-elements/loading/Loading";
 
 /**
  * ユーザーの職務経歴を入力するフォーム
@@ -35,8 +36,11 @@ export function WorkProfileForm() {
     return;
   }
 
+  /** ユーザーの就活プロフィール情報 */
+  const workProfile = useWorkProfile({ userId: user.userId });
   const { form, onSubmit, isSubmitting } = useWorkProfileForm({
     userId: user.userId,
+    workProfile,
   });
 
   return (

@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserWorkProfileApi } from "@/apis/userWorkProfileApi";
@@ -67,6 +67,7 @@ export const formSchema = z.object({
 
 interface UseWorkProfileFormProps {
   userId: string;
+  workProfile: UserWorkProfileRes | null;
 }
 
 /**
@@ -74,48 +75,55 @@ interface UseWorkProfileFormProps {
  * @param userId ユーザーID
  * @returns フォームのインスタンス、送信関数、送信中フラグ、送信中フラグのセッター
  */
-export const useWorkProfileForm = ({ userId }: UseWorkProfileFormProps) => {
+export const useWorkProfileForm = ({
+  userId,
+  workProfile,
+}: UseWorkProfileFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  /**
+   * フォームのデータを作成する関数
+   * @param workProfile ユーザーの就活プロフィール情報
+   * @returns フォームのデータ
+   */
+  const createFormData = (workProfile: UserWorkProfileRes | null) => {
+    return {
+      currentWork: {
+        currentIndustry: workProfile?.userCurrentWork.currentIndustry ?? "", // 必須入力
+        currentJobType: workProfile?.userCurrentWork.currentJobType ?? "", // 必須入力
+        currentSalary: workProfile?.userCurrentWork.currentSalary ?? 0, // 必須入力
+        currentCompany: workProfile?.userCurrentWork.currentCompany ?? "", // 必須入力
+        currentRole: workProfile?.userCurrentWork.currentRole ?? "", // 必須入力
+        currentWorkStyle:
+          workProfile?.userCurrentWork.currentWorkStyle ??
+          ("REMOTE" as WorkStyle), // 必須入力
+      },
+      targetWork: {
+        targetIndustry: workProfile?.userTargetWork.targetIndustry ?? "", // 必須入力
+        targetJobType: workProfile?.userTargetWork.targetJobType ?? "", // 必須入力
+        targetJobContent: workProfile?.userTargetWork.targetJobContent ?? "", // 必須入力
+        targetSalary: workProfile?.userTargetWork.targetSalary ?? 0, // 必須入力
+        targetWorkStyle:
+          workProfile?.userTargetWork.targetWorkStyle ??
+          ("REMOTE" as WorkStyle), // 必須入力
+        targetCompany: workProfile?.userTargetWork.targetCompany ?? "",
+        targetRole: workProfile?.userTargetWork.targetRole ?? "",
+        targetOtherConditions:
+          workProfile?.userTargetWork.targetOtherConditions ?? "",
+      },
+    };
+  };
 
   /**
    * react-hook-formのフォームのインスタンス
    */
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      currentWork: {
-        currentIndustry: "", // 必須
-        currentJobType: "", // 必須
-        currentSalary: 0, // 必須
-        currentCompany: "", // 必須
-        currentRole: "", // 必須
-        currentWorkStyle: "REMOTE" as WorkStyle, // 必須
-      },
-      targetWork: {
-        targetIndustry: "", // 必須入力
-        targetJobType: "", // 必須入力
-        targetJobContent: "", // 必須入力
-        targetSalary: 0, // 必須入力
-        targetWorkStyle: "REMOTE" as WorkStyle, // 必須入力
-        targetCompany: "", // 必須入力
-        targetRole: "", // 必須入力
-        targetOtherConditions: "",
-      },
-      // skills: [""],
-
-      // TODO: 任意項目のデータは、後で追加する。
-      // lastEducation: "",
-      // careerHistory: [
-      //   {
-      //     company: "",
-      //     role: "",
-      //     startDate: "",
-      //     endDate: "",
-      //     description: "",
-      //   },
-      // ],
-    },
+    defaultValues: createFormData(workProfile),
   });
+
+  // DEBUG専用: フォームのデータをコンソールに出力
+  // console.log("form", form.getValues());
 
   /**
    * ユーザーの職務経歴を送信する関数
@@ -127,37 +135,38 @@ export const useWorkProfileForm = ({ userId }: UseWorkProfileFormProps) => {
   const submitWorkProfile = async (
     formData: FormData
   ): Promise<UserWorkProfileRes> => {
-    const result = await UserWorkProfileApi.createUserWorkProfile({
-      userId,
+    const userWorkProfileRes: UserWorkProfileRes =
+      await UserWorkProfileApi.createUserWorkProfile({
+        userId,
 
-      // 必須項目
-      userCurrentWork: {
-        ...form.getValues("currentWork"),
-        currentSalary: form.getValues("currentWork.currentSalary") ?? 0,
-        currentRole: form.getValues("currentWork.currentRole") ?? "",
-      },
-      userTargetWork: {
-        ...form.getValues("targetWork"),
-        targetCompany: form.getValues("targetWork.targetCompany") ?? "",
-        targetRole: form.getValues("targetWork.targetRole") ?? "",
-        targetOtherConditions:
-          form.getValues("targetWork.targetOtherConditions") ?? "",
-      },
-      // userSkills: form.getValues("skills").map((skillName) => ({ skillName })),
+        // 必須項目
+        userCurrentWork: {
+          ...form.getValues("currentWork"),
+          currentSalary: form.getValues("currentWork.currentSalary") ?? 0,
+          currentRole: form.getValues("currentWork.currentRole") ?? "",
+        },
+        userTargetWork: {
+          ...form.getValues("targetWork"),
+          targetCompany: form.getValues("targetWork.targetCompany") ?? "",
+          targetRole: form.getValues("targetWork.targetRole") ?? "",
+          targetOtherConditions:
+            form.getValues("targetWork.targetOtherConditions") ?? "",
+        },
 
-      // TODO: 任意項目のデータは、後で追加する。
-      // userCareerHistories: form
-      // .getValues("careerHistory")
-      // .map((careerHistory) => ({
-      //   company: careerHistory.company ?? "",
-      //   role: careerHistory.role ?? "",
-      //   startDate: careerHistory.startDate ?? "",
-      //   endDate: careerHistory.endDate ?? "",
-      //   description: careerHistory.description ?? "",
-      // })),
-      // lastEducation: form.getValues("lastEducation") ?? "",
-    });
-    return result;
+        // TODO: 任意項目のデータは、後で追加する。
+        // userSkills: form.getValues("skills").map((skillName) => ({ skillName })),
+        // userCareerHistories: form
+        // .getValues("careerHistory")
+        // .map((careerHistory) => ({
+        //   company: careerHistory.company ?? "",
+        //   role: careerHistory.role ?? "",
+        //   startDate: careerHistory.startDate ?? "",
+        //   endDate: careerHistory.endDate ?? "",
+        //   description: careerHistory.description ?? "",
+        // })),
+        // lastEducation: form.getValues("lastEducation") ?? "",
+      });
+    return userWorkProfileRes;
   };
 
   /**
@@ -177,6 +186,7 @@ export const useWorkProfileForm = ({ userId }: UseWorkProfileFormProps) => {
         }
       });
       const result: UserWorkProfileRes = await submitWorkProfile(formData);
+      console.log("result", result);
 
       // 送信成功 Toast
       toast({
@@ -194,6 +204,13 @@ export const useWorkProfileForm = ({ userId }: UseWorkProfileFormProps) => {
       setIsSubmitting(false);
     }
   };
+
+  // ユーザーの就活プロフィール情報が更新されたら、フォームのデータを更新する。
+  useEffect(() => {
+    if (workProfile) {
+      form.reset(createFormData(workProfile));
+    }
+  }, [workProfile]);
 
   return { form, onSubmit, isSubmitting, setIsSubmitting };
 };
