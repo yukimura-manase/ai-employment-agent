@@ -19,7 +19,10 @@ async def generate_entrysheet_items(
             need_properties=request.need_properties,
             user_information=request.user_information
         )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get response from agent: {str(e)}")
 
+    try:
         # レスポンスのjsonをmarkdown化
         markdown_text: str = markdown.write_entrysheet(response)
 
@@ -37,4 +40,4 @@ async def generate_entrysheet_items(
         return response
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Failed to process the result: {str(e)}")

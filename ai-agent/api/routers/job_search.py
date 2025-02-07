@@ -11,10 +11,15 @@ async def execute_job_search(
     request: JobSearchRequest,
     background_tasks: BackgroundTasks
 ) -> JobSearchResponse:
+    if not request.user_information:
+        raise HTTPException(status_code=500, detail="Empty userInformation")
     try:
         response = job_search.predict(request.user_information)
-        """
-        target_columns = [
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+
+    try:
+        """target_columns = [
             "会社",
             "担当業務",
             "求人概要",
@@ -23,7 +28,6 @@ async def execute_job_search(
         ]
         response_data = pd.DataFrame(response)[target_columns]
         """
-        
         # 検索結果jsonをmarkdown化
         markdown_text: str = markdown.write_job_search_result(response)
 
@@ -40,4 +44,4 @@ async def execute_job_search(
         )
         return response
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to process the result: {str(e)}")
