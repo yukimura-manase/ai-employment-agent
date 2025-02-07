@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 
 # 求人検索の入力クラス
-class JobSearchInput(BaseSchema):
+class JobSearchRequest(BaseSchema):
     user_id: str
     system_prompt: str
     need_properties: dict
