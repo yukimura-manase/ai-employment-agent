@@ -1,18 +1,18 @@
-# Message model for the chatbot
+# 求人, エントリーシート項目, その他の対話のサマライズデータを格納するための型
 
 from enum import Enum
-from pydantic import BaseModel
+from models.base import BaseSchema
 from datetime import datetime
 
-class Sender(Enum):
-    USER = 'USER'
-    AI = 'AI'
+class Category(Enum):
+    RECRUIT = 'RECRUIT'
+    ENTRYSHEET = 'ENTRYSHEET'
+    GENERAL = 'GENERAL'
 
 
-class Message(BaseModel):
-    id: int
-    sender: Sender
-    receiver: str
+class MessageSummary(BaseSchema):
+    message_summary_id: str
+    user_id: str
+    category: Category
     content: str
     created_at: datetime = datetime.now()
-    updated_at: datetime = datetime.now()

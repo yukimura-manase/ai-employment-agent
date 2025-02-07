@@ -1,8 +1,18 @@
-from pydantic import BaseModel, field_validator
+from pydantic import field_validator
+from models.base import BaseSchema
 from typing import Dict
 
 
-class EntrySheetInput(BaseModel):  # 詳細は下記のコメントを参照
+# EntrySheetsテーブルに対応したモデルクラス
+class EntrySheet(BaseSchema):
+    entrysheet_id: str
+    user_id: str
+    correlation_count: int
+    message_summary_id: str
+
+
+class EntrySheetRequest(BaseSchema):
+    user_id: str
     system_prompt: str
     need_properties: Dict[str, dict]
     user_information: str
@@ -23,8 +33,11 @@ class EntrySheetInput(BaseModel):  # 詳細は下記のコメントを参照
         return v
 
 
-class EntrySheetResponse(BaseModel):
+class EntrySheetResponse(BaseSchema):
+    user_id: str
     items: Dict[str, str]  # {"自己PR": "私は○○です", "技術的な経験": "○○の経験があります"}
+
+
 
 
 '''
