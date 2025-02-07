@@ -1,8 +1,8 @@
 from fastapi import HTTPException, APIRouter, BackgroundTasks
+
+from api.services import db_service, markdown
 from api.services.entrysheet import EntrySheetAgent
-from api.services import db_service
 from models.entrysheet import EntrySheetRequest, EntrySheetResponse
-from api.services.markdown import write_entrysheet
 
 router = APIRouter(prefix="/entrysheet", tags=["entrysheet"])
 
@@ -22,7 +22,7 @@ async def generate_entrysheet_items(
         # print(response)
 
         # レスポンスのjsonをmarkdown化
-        markdown_text: str = write_entrysheet(response)
+        markdown_text: str = markdown.write_entrysheet(response)
 
         # バックグラウンドでDB保存処理を実行
         background_tasks.add_task(

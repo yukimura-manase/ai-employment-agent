@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
-from api.services import db_service, markdown, job_search
 
+from api.services import db_service, markdown, job_search
 from models.job_search import JobSearchRequest, JobSearchResponse
-from api.services import markdown
 
 router = APIRouter(prefix="/job-search", tags=["job-search"])
 
@@ -13,6 +12,9 @@ async def job_search(
     background_tasks: BackgroundTasks
 ) -> JobSearchResponse:
     try:
+        
+        response = job_search.predict(request.user_information)
+        """
         target_columns = [
             "会社",
             "担当業務",
@@ -20,9 +22,9 @@ async def job_search(
             "求人説明",
             "求人リンク"
         ]
-        response = job_search.predict(request.user_information)
-        # response_data = pd.DataFrame(response)[target_columns]
-
+        response_data = pd.DataFrame(response)[target_columns]
+        """
+        
         # 検索結果jsonをmarkdown化
         markdown_text: str = markdown.write_job_search_result(response)
 
