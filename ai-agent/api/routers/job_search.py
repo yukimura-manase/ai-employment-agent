@@ -9,10 +9,11 @@ router = APIRouter(prefix="/job-search", tags=["job-search"])
 
 # 仮のJobSearchAgentを実行
 @router.post("/search")
+@router.post("/search")
 async def job_search(
     request: JobSearchRequest,
     background_tasks: BackgroundTasks
-) -> List[dict]:
+) -> JobSearchResponse:
     try:
         search_result_items = JobSearchAgent(request).execute()
 
