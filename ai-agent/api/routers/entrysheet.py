@@ -15,14 +15,14 @@ async def generate_entrysheet_items(
     try:
         # EntrySheetAgentにリクエスト
         entrysheet_agent = EntrySheetAgent(request.system_prompt)
-        entrysheet_items = entrysheet_agent.generate(
+        response = entrysheet_agent.generate(
             need_properties=request.need_properties,
             user_information=request.user_information
         )
-        # print(entrysheet_items)
+        # print(response)
 
         # レスポンスのjsonをmarkdown化
-        markdown_text: str = write_entrysheet(entrysheet_items)
+        markdown_text: str = write_entrysheet(response)
 
         # バックグラウンドでDB保存処理を実行
         background_tasks.add_task(

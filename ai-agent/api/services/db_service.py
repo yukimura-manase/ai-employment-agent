@@ -56,8 +56,9 @@ def save_entrysheet_items(user_id: str, markdown_text: str):
     """
     EntrySheetAgentが出力したエントリーシート項目を保存する。
     """
-    message_summary_id = save_message_summary(user_id, markdown_text)
-    save_entrysheet(user_id, message_summary_id)
+    # message_summary_id = save_message_summary(user_id, markdown_text)
+    # save_entrysheet(user_id, message_summary_id)
+    pass
 
 
 def save_search_result(user_id: str, markdown_text: str):
