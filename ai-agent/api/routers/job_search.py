@@ -1,23 +1,30 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
-from api.services.job_search import JobSearchAgent
-from api.services import db_service, markdown
+from api.services import db_service, markdown, job_search
 
 from models.job_search import JobSearchRequest, JobSearchResponse
 from api.services import markdown
 
 router = APIRouter(prefix="/job-search", tags=["job-search"])
 
-# 仮のJobSearchAgentを実行
+
 @router.post("/search")
 async def job_search(
     request: JobSearchRequest,
     background_tasks: BackgroundTasks
 ) -> JobSearchResponse:
     try:
-        job_items = JobSearchAgent(request).execute()
+        target_columns = [
+            "会社",
+            "担当業務",
+            "求人概要",
+            "求人説明",
+            "求人リンク"
+        ]
+        response = job_search.predict(request.user_information)
+        # response_data = pd.DataFrame(response)[target_columns]
 
         # 検索結果jsonをmarkdown化
-        markdown_text: str = markdown.write_job_search_result(job_items)
+        markdown_text: str = markdown.write_job_search_result(response)
 
         # バックグラウンドでDB保存処理を実行
         background_tasks.add_task(
