@@ -3,14 +3,6 @@ from models.base import BaseSchema
 from typing import Dict
 
 
-# EntrySheetsテーブルに対応したモデルクラス
-class EntrySheet(BaseSchema):
-    entrysheet_id: str
-    user_id: str
-    correlation_count: int
-    message_summary_id: str
-
-
 system_prompt = """
 あなたはプロの就職エージェントです。
 顧客の情報が入力されるので、その情報に基づいて
