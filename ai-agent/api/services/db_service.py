@@ -10,7 +10,7 @@ supabase_key = os.environ.get("SUPABASE_ANON_KEY")
 supabase: Client = create_client(supabase_url, supabase_key)
 
 
-def save_message_summary(user_id: str, entrysheet_items: dict) -> uuid.UUID:
+def save_message_summary(user_id: str, markdown_text: str) -> uuid.UUID:
     """
     MessageSummariesに保存
     """
@@ -20,7 +20,7 @@ def save_message_summary(user_id: str, entrysheet_items: dict) -> uuid.UUID:
             message_summary_id=message_summary_id,
             user_id=user_id,
             category="ENTRYSHEET",
-            content=str(entrysheet_items),  # 保存先のcontentがstrなので変換している.
+            content=markdown_text,
         )
         response = (
             supabase.table("MessageSummaries")
@@ -32,7 +32,7 @@ def save_message_summary(user_id: str, entrysheet_items: dict) -> uuid.UUID:
         raise Exception(f"Failed to save message summary: {str(e)}")
 
 
-def save_entrysheet(user_id: str, message_summary_id: uuid.UUID, entrysheet_items: dict):
+def save_entrysheet(user_id: str, message_summary_id: uuid.UUID):
     """
     EntrySheetsに保存
     """
@@ -52,15 +52,15 @@ def save_entrysheet(user_id: str, message_summary_id: uuid.UUID, entrysheet_item
         raise Exception(f"Failed to save entrysheet: {str(e)}")
 
 
-def save_entrysheet_items(user_id: str, entrysheet_items: dict):
+def save_entrysheet_items(user_id: str, markdown_text: str):
     """
     EntrySheetAgentが出力したエントリーシート項目を保存する。
     """
-    message_summary_id = save_message_summary(user_id, entrysheet_items)
-    save_entrysheet(user_id, message_summary_id, entrysheet_items)
+    message_summary_id = save_message_summary(user_id, markdown_text)
+    save_entrysheet(user_id, message_summary_id)
 
 
-def save_search_result(user_id: str, search_result_items: list[dict]):
+def save_search_result(user_id: str, markdown_text: str):
     """
     JobSearchAgentが出力した求人検索結果を保存する。
     """
@@ -69,7 +69,7 @@ def save_search_result(user_id: str, search_result_items: list[dict]):
             message_summary_id=uuid.uuid4(),
             user_id=user_id,
             category="RECRUIT",
-            content=str(search_result_items),
+            content=markdown_text,
         )
         response = (
             supabase.table("MessageSummaries")
