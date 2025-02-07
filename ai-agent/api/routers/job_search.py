@@ -18,7 +18,7 @@ async def job_search(
         search_result_items = JobSearchAgent(request).execute()
 
         # バックグラウンドでDB保存処理を実行
-        background_tasks.add_task(db_service.save_entrysheet_items, search_result_items)
+        background_tasks.add_task(db_service.save_search_result, search_input.user_id, search_result_items)
 
         response = JobSearchResponse(items=search_result_items)
         return response
