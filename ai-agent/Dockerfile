@@ -6,11 +6,9 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /src
 
-# pipを使ってpoetryをインストール
-RUN pip install poetry
+COPY . /src
 
-# poetryの定義ファイルをコピー (存在する場合)
-COPY pyproject.toml* poetry.lock* ./
+RUN pip install poetry
 
 # poetryでライブラリをインストール (pyproject.tomlが既にある場合)
 RUN poetry config virtualenvs.in-project true
