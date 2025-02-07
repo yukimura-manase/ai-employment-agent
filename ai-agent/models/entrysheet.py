@@ -35,7 +35,7 @@ class EntrySheetRequest(BaseSchema):
 
 class EntrySheetResponse(BaseSchema):
     user_id: str
-    items: Dict[str, str]  # {"自己PR": "私は○○です", "技術的な経験": "○○の経験があります"}
+    text: str  # Markdown text
 
 
 

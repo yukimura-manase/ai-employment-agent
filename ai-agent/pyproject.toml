@@ -19,6 +19,7 @@ langchain-google-community = "^2.0.4"
 openai = "^1.61.1"
 langchain-openai = "^0.3.3"
 vertexai = "^1.71.1"
+mdutils = "^1.6.0"
 
 
 [build-system]

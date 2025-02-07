@@ -2,7 +2,7 @@ from models.base import BaseSchema
 from datetime import datetime
 from typing import List
 
-# 求人検索の入力クラス
+# 求人検索APIの入力クラス
 class JobSearchRequest(BaseSchema):
     user_id: str
     system_prompt: str
@@ -21,4 +21,5 @@ class JobOffer(BaseSchema):
 
 # 求人検索のレスポンスクラス
 class JobSearchResponse(BaseSchema):
-    items: List[JobOffer]
+    user_id: str
+    text: str  # markdown text
