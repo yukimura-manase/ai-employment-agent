@@ -5,11 +5,10 @@ import { UserApi } from "@/apis/userApi";
 import { UserRes } from "@/types/user/res/UserRes";
 
 interface UseGoogleLoginProps {
-  userInfo: UserRes | null;
   setUser: (user: UserRes) => void;
 }
 
-export const useGoogleLogin = ({ userInfo, setUser }: UseGoogleLoginProps) => {
+export const useGoogleLogin = ({ setUser }: UseGoogleLoginProps) => {
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [authSession, setAuthSession] = useState<Session | null>(null);
 
@@ -48,8 +47,8 @@ export const useGoogleLogin = ({ userInfo, setUser }: UseGoogleLoginProps) => {
   /**
    * 特定のユーザーをDBから取得する。
    */
-  const getUser = async (userId: string): Promise<UserRes | null> => {
-    return await UserApi.getUser(userId);
+  const getUserByEmail = async (email: string): Promise<UserRes | null> => {
+    return await UserApi.getUserByEmail(email);
   };
 
   /**
@@ -87,9 +86,12 @@ export const useGoogleLogin = ({ userInfo, setUser }: UseGoogleLoginProps) => {
       const user: UserIdentity | undefined = data.user?.identities
         ? data.user?.identities[0]
         : undefined;
+      const email: string = user?.identity_data?.email;
 
-      // UserInfoがある場合は、DBに登録はしない。
+      const userInfo: UserRes | null = await getUserByEmail(email);
+      // UserInfoがある場合は、DBに登録はせず、処理を終了する。
       if (userInfo) {
+        setUser(userInfo);
         return;
       }
 
@@ -97,7 +99,7 @@ export const useGoogleLogin = ({ userInfo, setUser }: UseGoogleLoginProps) => {
       if (user && user.identity_data) {
         // Googleログインユーザー情報から、ユーザー登録を行う。
         // Googleのemailとfull_nameは、そのまま登録する。
-        const resUser = await registerUser(
+        const resUser: UserRes = await registerUser(
           user.identity_data.email,
           user.identity_data.full_name
         );

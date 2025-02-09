@@ -1,20 +1,14 @@
 import { UserIdentity } from "@supabase/supabase-js";
 import { useGoogleLogin } from "./hooks/useGoogleLogin";
 import { useUserStates } from "@/stores/user";
-import { UserRes } from "@/types/user/res/UserRes";
-
-interface GoogleLoginButtonProps {
-  userInfo: UserRes | null; // ブラウザで過去にログインしていたユーザー情報
-}
 
 /**
  * Google Login ボタン
  */
-export const GoogleLoginButton = ({ userInfo }: GoogleLoginButtonProps) => {
+export const GoogleLoginButton = () => {
   // setUser: ユーザー情報を global state に格納するために必要。
-  const { user, setUser } = useUserStates();
+  const { setUser } = useUserStates();
   const { authUser, signInWithGoogle, signOutGoogleAuth } = useGoogleLogin({
-    userInfo: user,
     setUser,
   });
 

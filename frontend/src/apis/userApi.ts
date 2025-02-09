@@ -16,6 +16,18 @@ export class UserApi {
   }
 
   /**
+   * ユーザーをemailで検索する。
+   */
+  static async getUserByEmail(email: string): Promise<UserRes | null> {
+    const res = await fetch(`${serverUrl}/users/email/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    return res.json();
+  }
+
+  /**
    * ユーザー登録API
    */
   static async createUser(req: CreateUserReq): Promise<UserRes> {

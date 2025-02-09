@@ -1,8 +1,10 @@
 import { ReactNode } from "react";
 import { Header } from "@/components/shared/ui-parts/header";
+import { useUserStates } from "@/stores/user";
+import { useLocalStorageUser } from "@/hooks/useLocalStorageUser";
 
 /**
- * Basic Layout
+ * 共通のBasic Layout
  *
  * - Header
  * - Main Area

@@ -1,22 +1,12 @@
-import { useState } from "react";
 import { TbRobot } from "react-icons/tb";
 import { GoogleLoginButton } from "../google-login-button";
 import { useRouter } from "next/router";
-import { useUserStates } from "@/stores/user";
-import { useLocalStorageUser } from "./hooks/useUser";
 
 /**
  * ページ共通のHeader
- *
- * 一番最初にレンダリングされるComponentの1つであるため、ここでUser情報の管理をする。
- *    - ログインユーザーのユーザー情報を取得する。
- *    - Google Login 周りの処理を行う。
  */
 export const Header = () => {
   const router = useRouter();
-  // setUser: ユーザー情報を global state に格納するために必要。
-  const { user, setUser } = useUserStates();
-  useLocalStorageUser({ setUser });
 
   return (
     <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white relative z-[999]">
@@ -30,7 +20,7 @@ export const Header = () => {
         </div>
 
         <nav className="hidden md:flex space-x-4">
-          <GoogleLoginButton userInfo={user} />
+          <GoogleLoginButton />
         </nav>
       </div>
     </header>
