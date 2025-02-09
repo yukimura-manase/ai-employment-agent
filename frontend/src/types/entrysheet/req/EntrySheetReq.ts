@@ -1,12 +1,12 @@
 export interface CreateEntrySheetReq {
   userId: string;
   userInformation: string;
-  systemPrompt: string;
-  needProperties: {
-    [key: string]: {
-      type: string;
-    };
-  };
+  // systemPrompt: string;
+  // needProperties: {
+  //   [key: string]: {
+  //     type: string;
+  //   };
+  // };
 }
 
 // NOTE: exampleは、次のとおり。
