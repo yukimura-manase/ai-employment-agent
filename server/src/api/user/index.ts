@@ -1,6 +1,5 @@
 import { Hono } from "hono";
-import { PrismaClient } from "@prisma/client";
-import { env } from "hono/adapter";
+import { globalPrisma } from "@/libs/dbClient.js";
 
 // toC User Entity API Group
 export const userRouter = new Hono();
@@ -12,26 +11,18 @@ userRouter.get("/", async (context) => {
 
 // 特定のユーザー取得
 userRouter.get("/:userId", async (context) => {
-  const { DATABASE_URL } = env<{ DATABASE_URL: string }>(context);
   try {
-    const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: DATABASE_URL,
-        },
-      },
-    });
-
     const userId = context.req.param("userId");
     if (!userId) {
       return context.text("Missing parameters", 400);
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await globalPrisma.user.findUnique({
       where: {
         userId: userId,
       },
     });
+
     if (!user) {
       // ユーザーが見つからない場合は、nullを返却する。
       return context.json(null);
@@ -46,25 +37,16 @@ userRouter.get("/:userId", async (context) => {
 
 // 特定のユーザーをemailで検索する。
 userRouter.post("/email/", async (context) => {
-  const { DATABASE_URL } = env<{ DATABASE_URL: string }>(context);
   try {
-    const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: DATABASE_URL,
-        },
-      },
-    });
-
-    // リクエストボディの取り出し
     const { email } = await context.req.json<{ email: string }>();
     if (!email) {
       return context.text("Missing parameters", 400);
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await globalPrisma.user.findUnique({
       where: { email },
     });
+
     if (!user) {
       // ユーザーが見つからない場合は、nullを返却する。
       return context.json(null);
@@ -79,36 +61,21 @@ userRouter.post("/email/", async (context) => {
 
 // ユーザーの新規登録, POST /users
 userRouter.post("/", async (context) => {
-  const { DATABASE_URL } = env<{ DATABASE_URL: string }>(context);
-
   try {
-    const prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: DATABASE_URL,
-        },
-      },
-    });
-
-    // リクエストボディの取り出し
     const { name, email } = await context.req.json<{
       name: string;
       email: string;
     }>();
-    // console.log("name", name);
-    // console.log("email", email);
 
-    // パラメータの簡易バリデーション（必要に応じてしっかりとしたチェックを入れる）
     if (!name || !email) {
       return context.text("Missing parameters", 400);
     }
 
-    // すでに登録済みのメールアドレスかチェック
-    const existingUser = await prisma.user.findUnique({
+    // 既存ユーザーを取得する。
+    const existingUser = await globalPrisma.user.findUnique({
       where: { email },
     });
 
-    // 登録済みのユーザーがいる場合は、そのユーザー情報を返却する。
     if (existingUser) {
       return context.json({
         userId: existingUser.userId,
@@ -118,15 +85,13 @@ userRouter.post("/", async (context) => {
       });
     }
 
-    // ユーザーの新規登録
-    const newUser = await prisma.user.create({
+    const newUser = await globalPrisma.user.create({
       data: {
         name,
         email,
       },
     });
 
-    // 作成したユーザーを返却
     return context.json(
       {
         userId: newUser.userId,
