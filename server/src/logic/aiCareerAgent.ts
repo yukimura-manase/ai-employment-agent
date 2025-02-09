@@ -119,7 +119,13 @@ const formatUserWorkProfilePrompt = (
   }
   const { userCurrentWork, userTargetWork } = userWorkProfile;
 
-  const formatMatter = (target: object, excludeKeys: string[]): string => {
+  /**
+   * ユーザーのプロフィール情報を、key: value の形式で文字列にフォーマットする。
+   *
+   * @param target 表示するプロフィール情報
+   * @param excludeKeys 非表示にするキー
+   */
+  const formatKeyValueStr = (target: object, excludeKeys: string[]): string => {
     const formattedStr = Object.entries(target)
       .map(([key, value]) => {
         // 値がない場合は、非表示にする。
@@ -139,21 +145,18 @@ const formatUserWorkProfilePrompt = (
     return formattedStr;
   };
 
+  const commonKeys = ["userId", "userWorkProfileId", "createdAt", "updatedAt"];
+
   // userCurrentWork を 1つずつ key: value の形式で表示する。
-  // ただし、ユーザーIDは、セキュリティのため、非表示にする。
-  const userCurrentWorkStr = formatMatter(userCurrentWork, [
-    "userId",
-    "userWorkProfileId",
-    "createdAt",
-    "updatedAt",
+  const userCurrentWorkStr: string = formatKeyValueStr(userCurrentWork, [
+    ...commonKeys,
+    "userCurrentWorkId",
   ]);
 
   // userTargetWork を 1つずつ key: value の形式で表示する。
-  const userTargetWorkStr = formatMatter(userTargetWork, [
-    "userId",
-    "userWorkProfileId",
-    "createdAt",
-    "updatedAt",
+  const userTargetWorkStr: string = formatKeyValueStr(userTargetWork, [
+    ...commonKeys,
+    "userTargetWorkId",
   ]);
 
   return `
@@ -175,22 +178,25 @@ export const aiCareerAgent = async (
   latestMessage: string,
   userWorkProfile: UserWorkProfileRes | null // 就活プロフィール情報
 ) => {
-  console.log("aiCareerAgent Start");
-  console.log("userWorkProfile", userWorkProfile);
+  // console.log("aiCareerAgent Start");
+
+  // DEBUG: ユーザーの就活プロフィール情報を表示する。
+  // console.log("userWorkProfile", userWorkProfile);
 
   // ユーザーの会話データを結合する。
   const userMessagesStr: string = historyMessages
     .filter((message) => message.sender === "USER")
-    .map((message) => message.content)
+    .map((message) => `${message.sender}: ${message.content}`) // User: ユーザーのメッセージにフォーマットする。
     .join("\n");
 
   // AIの会話データを結合する。
   const aiMessagesStr: string = historyMessages
     .filter((message) => message.sender === "AI")
-    .map((message) => message.content)
+    .map((message) => `${message.sender}: ${message.content}`) // AI: AIのメッセージにフォーマットする。
     .join("\n");
 
-  const userWorkProfilePrompt = formatUserWorkProfilePrompt(userWorkProfile);
+  const userWorkProfilePrompt: string =
+    formatUserWorkProfilePrompt(userWorkProfile);
 
   // システムプロンプトを作成する。
   const systemPrompt: string = createSystemPrompt({
@@ -198,7 +204,9 @@ export const aiCareerAgent = async (
     aiAnswer: aiMessagesStr,
     userWorkProfile: userWorkProfilePrompt,
   });
-  console.log("systemPrompt", systemPrompt);
+
+  // DEBUG: システムプロンプトを表示する。
+  // console.log("systemPrompt", systemPrompt);
 
   // プロンプトテンプレートを作成する。
   const promptTemplate: ChatPromptTemplate<any, any> =
