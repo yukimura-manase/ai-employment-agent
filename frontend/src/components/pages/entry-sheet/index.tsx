@@ -10,6 +10,7 @@ import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
 import { useCreateEntrySheet } from "./hooks/useCreateEntrySheet";
 import { Loading } from "@/components/shared/ui-elements/loading/Loading";
 import { useUserInformation } from "./hooks/useUserInformation";
+import { EntrySheetMarkdownView } from "./parts/EntrySheetMarkdownView";
 
 export const EntrySheetPage = () => {
   const { user } = useUserStates();
@@ -21,7 +22,7 @@ export const EntrySheetPage = () => {
   });
   console.log("userInformationPrompt", userInformationPrompt);
 
-  const { isLoading, createEntrySheet } = useCreateEntrySheet({
+  const { isLoading, createEntrySheet, entrySheetInfo } = useCreateEntrySheet({
     userId: user?.userId ?? "",
     userInformation: userInformationPrompt,
   });
@@ -38,9 +39,16 @@ export const EntrySheetPage = () => {
         <SidebarTrigger />
         {/* 会話 */}
         <section className="w-full h-full flex flex-col gap-3 items-center justify-center">
-          <div className="container mx-auto py-10">
-            <h1 className="text-2xl font-bold mb-5">エントリーシート作成</h1>
+          <div className="container mx-auto py-10 ">
+            <h1 className="text-2xl font-bold mb-5 absolute top-[120px]">
+              エントリーシート作成
+            </h1>
           </div>
+
+          {/* エントリーシートのMarkdownを表示する */}
+          {entrySheetInfo && (
+            <EntrySheetMarkdownView entrySheet={entrySheetInfo.text} />
+          )}
 
           <div className="mt-5">
             {isLoading ? (

@@ -37,7 +37,9 @@ export const useCreateEntrySheet = ({
     setIsLoading(true);
     const req = toCreateEntrySheetReq();
     try {
-      const res = await EntrySheetApi.createEntrySheet(req);
+      const res: CreateEntrySheetRes = await EntrySheetApi.createEntrySheet(
+        req
+      );
       setEntrySheetInfo(res);
     } catch (error) {
       console.error(error);
