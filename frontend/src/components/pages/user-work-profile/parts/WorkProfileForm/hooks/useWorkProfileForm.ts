@@ -68,6 +68,7 @@ export const formSchema = z.object({
 interface UseWorkProfileFormProps {
   userId: string;
   workProfile: UserWorkProfileRes | null;
+  userWorkProfileId: string | null; // ユーザーの就活プロフィールID (更新時にだけ使用する)
 }
 
 /**
@@ -78,6 +79,7 @@ interface UseWorkProfileFormProps {
 export const useWorkProfileForm = ({
   userId,
   workProfile,
+  userWorkProfileId,
 }: UseWorkProfileFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -86,7 +88,9 @@ export const useWorkProfileForm = ({
    * @param workProfile ユーザーの就活プロフィール情報
    * @returns フォームのデータ
    */
-  const createFormData = (workProfile: UserWorkProfileRes | null) => {
+  const createFormData = (
+    workProfile: UserWorkProfileRes | null
+  ): z.infer<typeof formSchema> => {
     return {
       currentWork: {
         currentIndustry: workProfile?.userCurrentWork.currentIndustry ?? "", // 必須入力
@@ -138,7 +142,7 @@ export const useWorkProfileForm = ({
     const userWorkProfileRes: UserWorkProfileRes =
       await UserWorkProfileApi.createUserWorkProfile({
         userId,
-
+        userWorkProfileId: userWorkProfileId ?? undefined,
         // 必須項目
         userCurrentWork: {
           ...form.getValues("currentWork"),
@@ -176,6 +180,8 @@ export const useWorkProfileForm = ({
     setIsSubmitting(true);
     try {
       const formData = new FormData();
+
+      // フォームのデータをFormDataに変換する。
       Object.entries(values).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
           if (typeof value === "object") {
@@ -188,12 +194,16 @@ export const useWorkProfileForm = ({
       const result: UserWorkProfileRes = await submitWorkProfile(formData);
       console.log("result", result);
 
+      alert("保存が完了しました🐱");
+
       // 送信成功 Toast
       toast({
         title: "Success",
         description: "保存が完了しました🐱",
       });
     } catch (error) {
+      console.error("error", error);
+
       // 送信失敗 Toast
       toast({
         title: "Error",

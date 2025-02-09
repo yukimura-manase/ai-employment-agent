@@ -7,6 +7,7 @@ import { WorkStyle } from "../UserWorkProfile";
  */
 export interface CreateUserWorkProfileReq {
   userId: string;
+  userWorkProfileId?: string; // ユーザーの就活プロフィールID (更新時にだけ使用する)
 
   // 必須項目
   userCurrentWork: CreateUserCurrentWorkReq; // 現在の職業

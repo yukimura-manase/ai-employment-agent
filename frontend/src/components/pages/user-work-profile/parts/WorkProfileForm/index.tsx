@@ -41,6 +41,7 @@ export function WorkProfileForm() {
   const { form, onSubmit, isSubmitting } = useWorkProfileForm({
     userId: user.userId,
     workProfile,
+    userWorkProfileId: workProfile?.userWorkProfileId ?? null,
   });
 
   return (
