@@ -6,7 +6,7 @@ Agentの出力をmarkdown化するためのモジュール
 
 def write_entrysheet(entrysheet_items: list[dict[str, str]]) -> str:
     md = MdUtils(file_name='')
-    md.new_header(level=1, title='あなたのアピール項目')
+    md.new_header(level=1, title='エントリーシート項目')
     if not entrysheet_items:
         return "No entry sheet data provided."
     entrysheet_item = entrysheet_items[0]
