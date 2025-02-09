@@ -95,6 +95,10 @@ http://localhost:8000/docs
 docker compose exec ai-agent poetry add package-name
 ```
 
+### 5. ai-agent/key.json
+
+- Google Cloud の Service Account の JSON ファイルを配置してください。
+
 ## 【参考・引用】
 
 1. [FastAPI 入門](https://zenn.dev/sh0nk/books/537bb028709ab9)
