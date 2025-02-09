@@ -1,29 +1,38 @@
 import { UserIdentity } from "@supabase/supabase-js";
 import { useGoogleLogin } from "./hooks/useGoogleLogin";
 import { useUserStates } from "@/stores/user";
+import { UserRes } from "@/types/user/res/UserRes";
 
-export const GoogleLoginButton = () => {
-  // ユーザー情報を global state に格納
-  const { setUser } = useUserStates();
+interface GoogleLoginButtonProps {
+  userInfo: UserRes | null; // ブラウザで過去にログインしていたユーザー情報
+}
+
+/**
+ * Google Login ボタン
+ */
+export const GoogleLoginButton = ({ userInfo }: GoogleLoginButtonProps) => {
+  // setUser: ユーザー情報を global state に格納するために必要。
+  const { user, setUser } = useUserStates();
   const { authUser, signInWithGoogle, signOutGoogleAuth } = useGoogleLogin({
+    userInfo: user,
     setUser,
   });
 
   // ログインユーザー情報 (Google)
-  const user: UserIdentity | undefined = authUser?.identities
+  const googleUser: UserIdentity | undefined = authUser?.identities
     ? authUser.identities[0]
     : undefined;
 
   return (
     <div className="flex gap-2">
-      {user && user.identity_data && (
+      {googleUser && googleUser.identity_data && (
         <div className="flex items-center gap-2">
           <img
-            src={user.identity_data.avatar_url}
-            alt={user.identity_data.full_name}
+            src={googleUser.identity_data.avatar_url}
+            alt={googleUser.identity_data.full_name}
             className="w-8 h-8 rounded-full"
           />
-          <span>{user.identity_data.full_name}</span>
+          <span>{googleUser.identity_data.full_name}</span>
         </div>
       )}
       {authUser ? (

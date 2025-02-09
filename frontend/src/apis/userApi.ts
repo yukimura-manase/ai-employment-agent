@@ -6,6 +6,16 @@ export class UserApi {
   private constructor() {}
 
   /**
+   * 特定のユーザー取得
+   *
+   * - ユーザーがDBに登録されていない場合、nullを返す。
+   */
+  static async getUser(userId: string): Promise<UserRes | null> {
+    const res = await fetch(`${serverUrl}/users/${userId}`);
+    return res.json();
+  }
+
+  /**
    * ユーザー登録API
    */
   static async createUser(req: CreateUserReq): Promise<UserRes> {

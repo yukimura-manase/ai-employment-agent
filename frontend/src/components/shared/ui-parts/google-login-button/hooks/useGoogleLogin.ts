@@ -1,14 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabaseClient } from "@/libs/supabase";
-import { Session, User, UserIdentity } from "@supabase/supabase-js";
+import { AuthError, Session, User, UserIdentity } from "@supabase/supabase-js";
 import { UserApi } from "@/apis/userApi";
 import { UserRes } from "@/types/user/res/UserRes";
 
 interface UseGoogleLoginProps {
+  userInfo: UserRes | null;
   setUser: (user: UserRes) => void;
 }
 
-export const useGoogleLogin = ({ setUser }: UseGoogleLoginProps) => {
+export const useGoogleLogin = ({ userInfo, setUser }: UseGoogleLoginProps) => {
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [authSession, setAuthSession] = useState<Session | null>(null);
 
@@ -45,7 +46,14 @@ export const useGoogleLogin = ({ setUser }: UseGoogleLoginProps) => {
   }, []);
 
   /**
-   * ユーザー登録 API をCallする。
+   * 特定のユーザーをDBから取得する。
+   */
+  const getUser = async (userId: string): Promise<UserRes | null> => {
+    return await UserApi.getUser(userId);
+  };
+
+  /**
+   * ユーザーをDBに登録する。
    */
   const registerUser = async (
     email: string,
@@ -56,38 +64,58 @@ export const useGoogleLogin = ({ setUser }: UseGoogleLoginProps) => {
 
   /**
    * ユーザー情報を取得して state に格納 & ユーザー登録を実施する。
+   *
+   * - supabaseから、ログインユーザー情報を取得する。
+   * - ログインユーザー情報が取得できた場合、ユーザー登録を行う。
+   * - ユーザー登録がDBになければ、DBに登録する。
    */
   const fetchUser = useCallback(async () => {
     try {
+      // Googleユーザー情報を取得する。
       const { data, error } = await supabaseClient.auth.getUser();
       if (error) {
-        throw new Error(error.message);
+        // AuthErrorの場合は、error throwしない。
+        if (error instanceof AuthError) {
+          console.warn("error.message", error.message);
+          return;
+        }
+        throw new Error(error);
       }
       setAuthUser(data?.user ?? null);
 
-      // ユーザー情報が取得できた場合、ユーザー登録を行う。
-      if (data?.user) {
-        // ログインユーザー情報 (Google)
-        const user: UserIdentity | undefined = data.user?.identities
-          ? data.user?.identities[0]
-          : undefined;
+      /** Googleログインユーザー情報 */
+      const user: UserIdentity | undefined = data.user?.identities
+        ? data.user?.identities[0]
+        : undefined;
 
-        if (user && user.identity_data) {
-          // console.log("user", user);
-          const resUser = await registerUser(
-            user.identity_data.email,
-            user.identity_data.full_name
-          );
+      // UserInfoがある場合は、DBに登録はしない。
+      if (userInfo) {
+        return;
+      }
 
-          setUser(resUser);
-        }
+      // DBに登録されていない場合は、Googleユーザー情報から、ユーザー登録を行う。
+      if (user && user.identity_data) {
+        // Googleログインユーザー情報から、ユーザー登録を行う。
+        // Googleのemailとfull_nameは、そのまま登録する。
+        const resUser = await registerUser(
+          user.identity_data.email,
+          user.identity_data.full_name
+        );
+
+        // ユーザー情報を GlobalState に格納
+        setUser(resUser);
+
+        // LocalStorageに、Loginユーザーの情報を保存する。
+        localStorage.setItem("userId", resUser.userId);
       }
     } catch (err) {
       console.error("Error fetching user:", err);
     }
   }, []);
 
-  // セッション情報を取得して state に格納
+  /**
+   * セッション情報を取得して state に格納
+   */
   const fetchSession = useCallback(async () => {
     try {
       const { data, error } = await supabaseClient.auth.getSession();
@@ -101,9 +129,11 @@ export const useGoogleLogin = ({ setUser }: UseGoogleLoginProps) => {
   }, []);
 
   useEffect(() => {
-    // 初回マウント時にユーザー・セッション情報を取得
-    fetchUser();
-    fetchSession();
+    // 初回マウント時にユーザー・セッション情報を取得する。
+    const bulkFetch = async () => {
+      await Promise.all([fetchUser(), fetchSession()]);
+    };
+    bulkFetch();
 
     // 認証状態が変化したときに state を更新
     const {
