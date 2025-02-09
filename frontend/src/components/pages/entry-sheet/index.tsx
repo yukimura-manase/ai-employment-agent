@@ -7,17 +7,28 @@ import {
   SidebarTrigger,
 } from "@/components/shared/ui-elements/sidebar";
 import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
+import { useCreateEntrySheet } from "./hooks/useCreateEntrySheet";
+import { Loading } from "@/components/shared/ui-elements/loading/Loading";
+import { useUserInformation } from "./hooks/useUserInformation";
 
 export const EntrySheetPage = () => {
   const { user } = useUserStates();
   const router = useRouter();
-
   console.log("EntrySheetPage", user);
 
-  // ログインしていない場合は、Topページにリダイレクトする。
+  const { userInformationPrompt } = useUserInformation({
+    userId: user?.userId ?? "",
+  });
+  console.log("userInformationPrompt", userInformationPrompt);
+
+  const { isLoading, createEntrySheet } = useCreateEntrySheet({
+    userId: user?.userId ?? "",
+    userInformation: userInformationPrompt,
+  });
+
+  // User取得まで、ローディングを表示する。
   // if (!user) {
-  //   router.push("/");
-  //   return;
+  //   return <Loading />;
   // }
 
   return (
@@ -32,7 +43,18 @@ export const EntrySheetPage = () => {
           </div>
 
           <div className="mt-5">
-            <Button onClick={() => router.push("/")}>トップページに戻る</Button>
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <div className="flex justify-center gap-3">
+                <Button onClick={() => createEntrySheet()}>
+                  エントリーシート作成
+                </Button>
+                <Button onClick={() => router.push("/")}>
+                  トップページに戻る
+                </Button>
+              </div>
+            )}
           </div>
         </section>
       </SidebarProvider>
