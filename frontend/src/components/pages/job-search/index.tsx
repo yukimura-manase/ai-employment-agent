@@ -37,7 +37,7 @@ export const JobSearchPage = () => {
         <AppSidebar />
         <SidebarTrigger />
         <section className="w-full h-[80%] flex flex-col gap-3 items-center justify-center">
-          <div className="container mx-auto py-10">
+          <div className="container mx-auto py-5">
             <h1 className="text-2xl font-bold mb-5 absolute top-[120px]">
               求人検索
               <p className="text-sm text-gray-500 mt-2">
