@@ -44,6 +44,39 @@ userRouter.get("/:userId", async (context) => {
   }
 });
 
+// 特定のユーザーをemailで検索する。
+userRouter.post("/email/", async (context) => {
+  const { DATABASE_URL } = env<{ DATABASE_URL: string }>(context);
+  try {
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: DATABASE_URL,
+        },
+      },
+    });
+
+    // リクエストボディの取り出し
+    const { email } = await context.req.json<{ email: string }>();
+    if (!email) {
+      return context.text("Missing parameters", 400);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) {
+      // ユーザーが見つからない場合は、nullを返却する。
+      return context.json(null);
+    }
+
+    return context.json(user);
+  } catch (error) {
+    console.error(error);
+    return context.text("Internal Server Error", 500);
+  }
+});
+
 // ユーザーの新規登録, POST /users
 userRouter.post("/", async (context) => {
   const { DATABASE_URL } = env<{ DATABASE_URL: string }>(context);
