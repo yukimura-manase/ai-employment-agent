@@ -40,3 +40,12 @@ docker compose up --build
 その他詳細は、voice-vox の README.md を参照 📝
 
 ## Browser Use & FastAPI
+
+ai-agent server 起動
+
+```bash
+cd ai-agent
+docker compose up --build
+```
+
+その他詳細は、ai-agent の README.md を参照 📝
