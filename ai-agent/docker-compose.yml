@@ -4,7 +4,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./api:/src/api  # ディレクトリ部分のみマウントする
-      - ./models:/src/models  
+      - ./api:/src/api # ディレクトリ部分のみマウントする
+      - ./models:/src/models
+      - ./key.json:/key.json
     ports:
       - 8000:8000 # ホストマシンのポート8000を、docker内のポート8000に接続する
