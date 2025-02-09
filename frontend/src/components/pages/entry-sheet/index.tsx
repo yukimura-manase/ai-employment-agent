@@ -43,6 +43,9 @@ export const EntrySheetPage = () => {
           <div className="container mx-auto py-10 ">
             <h1 className="text-2xl font-bold mb-5 absolute top-[120px]">
               エントリーシート作成
+              <p className="text-sm text-gray-500 mt-2">
+                エントリーシート作成には、5~10秒ほどかかります。
+              </p>
             </h1>
           </div>
 

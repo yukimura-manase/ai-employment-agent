@@ -41,7 +41,7 @@ export const JobSearchPage = () => {
             <h1 className="text-2xl font-bold mb-5 absolute top-[120px]">
               求人検索
               <p className="text-sm text-gray-500 mt-2">
-                求人検索には、10~30秒程度かかります。
+                求人検索には、10~30秒ほどかかります。
               </p>
             </h1>
           </div>
