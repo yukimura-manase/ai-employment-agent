@@ -1,3 +1,4 @@
+import logging
 from fastapi import HTTPException, APIRouter, BackgroundTasks
 
 from api.services import markdown
@@ -6,12 +7,16 @@ from models.entrysheet import EntrySheetRequest, EntrySheetResponse
 
 router = APIRouter(prefix="/entrysheet", tags=["entrysheet"])
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
 
 @router.post("/generate")
 async def generate_entrysheet_items(
     request: EntrySheetRequest,
     background_tasks: BackgroundTasks,
 ) -> EntrySheetResponse:
+    logger.info(request)
     try:
         # EntrySheetAgentにリクエスト
         entrysheet_agent = EntrySheetAgent(request.system_prompt)

@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 
 from api.services import markdown, job_search
@@ -5,12 +6,16 @@ from models.job_search import JobSearchRequest, JobSearchResponse
 
 router = APIRouter(prefix="/job-search", tags=["job-search"])
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
 
 @router.post("/search")
 async def execute_job_search(
     request: JobSearchRequest,
     background_tasks: BackgroundTasks
 ) -> JobSearchResponse:
+    logger.info(request)
     if not request.user_information:
         raise HTTPException(status_code=500, detail="Empty userInformation")
     try:
