@@ -27,10 +27,11 @@ export const EntrySheetPage = () => {
     userInformation: userInformationPrompt,
   });
 
-  // User取得まで、ローディングを表示する。
-  // if (!user) {
-  //   return <Loading />;
-  // }
+  // Userが取得できていない場合は、Topページにリダイレクトする。
+  if (!user) {
+    router.push("/");
+    return;
+  }
 
   return (
     <BasicLayout>

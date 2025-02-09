@@ -12,7 +12,7 @@ export const EntrySheetMarkdownView = ({
   entrySheet,
 }: EntrySheetMarkdownViewProps) => {
   return (
-    <div>
+    <div className="w-[90%] h-[70%] bg-gray-100 rounded-lg p-5 overflow-y-scroll">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{entrySheet}</ReactMarkdown>
     </div>
   );
