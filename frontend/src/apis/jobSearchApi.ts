@@ -11,7 +11,7 @@ export class JobSearchApi {
   static async createJobSearch(
     req: CreateJobSearchReq
   ): Promise<CreateJobSearchRes> {
-    const res = await fetch(`${aiAgentUrl}/jobsearch/generate`, {
+    const res = await fetch(`${aiAgentUrl}/job-search/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(req),
