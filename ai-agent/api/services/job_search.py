@@ -74,7 +74,7 @@ class VertexAIBaseAgent():
 
     def init_vertexai(self):
         vertexai.init(
-            project="spread-sheet-test-259308",
+            project=os.environ["VERTEXAI_PROJECT_ID"],
             location="us-central1",
         )
 
