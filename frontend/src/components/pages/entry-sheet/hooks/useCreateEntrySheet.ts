@@ -24,8 +24,8 @@ export const useCreateEntrySheet = ({
     return {
       userId,
       userInformation,
-      systemPrompt: SYSTEM_PROMPT, // いったん、固定値。
-      needProperties: {}, // いったん、空。
+      // systemPrompt: SYSTEM_PROMPT, // いったん、固定値。
+      // needProperties: {}, // いったん、空。
     };
   };
 

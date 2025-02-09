@@ -8,6 +8,7 @@ import {
   SidebarTrigger,
 } from "@/components/shared/ui-elements/sidebar";
 import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
+import { Loading } from "@/components/shared/ui-elements/loading/Loading";
 
 export const TalkRoomPage = () => {
   const { user } = useUserStates();

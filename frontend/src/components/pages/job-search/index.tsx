@@ -10,6 +10,7 @@ import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
 import { useJobSearch } from "./hooks/useJobSearch";
 import { useUserInformation } from "@/hooks/useUserInformation";
 import { JobSearchResultView } from "./parts/JobSearchResultView";
+import { Loading } from "@/components/shared/ui-elements/loading/Loading";
 
 export const JobSearchPage = () => {
   const { user } = useUserStates();
@@ -19,26 +20,29 @@ export const JobSearchPage = () => {
     userId: user?.userId ?? "",
   });
 
-  const { jobSearchResult, createJobSearch } = useJobSearch({
+  const { isLoading, jobSearchResult, createJobSearch } = useJobSearch({
     userId: user?.userId ?? "",
     userInformation: userInformationPrompt,
   });
 
   // ログインしていない場合は、Topページにリダイレクトする。
-  // if (!user) {
-  //   router.push("/");
-  //   return;
-  // }
+  if (!user) {
+    router.push("/");
+    return;
+  }
 
   return (
     <BasicLayout>
       <SidebarProvider>
         <AppSidebar />
         <SidebarTrigger />
-        <section className="w-full h-full flex flex-col gap-3 items-center justify-center">
-          <div className="container mx-auto py-10">
+        <section className="w-full h-[80%] flex flex-col gap-3 items-center justify-center">
+          <div className="container mx-auto py-5">
             <h1 className="text-2xl font-bold mb-5 absolute top-[120px]">
               求人検索
+              <p className="text-sm text-gray-500 mt-2">
+                求人検索には、10~30秒ほどかかります。
+              </p>
             </h1>
           </div>
 
@@ -47,10 +51,16 @@ export const JobSearchPage = () => {
             <JobSearchResultView jobSearchResult={jobSearchResult} />
           )}
 
-          <div className="flex justify-center gap-3">
-            <Button onClick={() => createJobSearch()}>求人検索🔍</Button>
-            <Button onClick={() => router.push("/")}>トップページに戻る</Button>
-          </div>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <div className="mt-3 flex justify-center gap-3">
+              <Button onClick={() => createJobSearch()}>求人検索🔍</Button>
+              <Button onClick={() => router.push("/")}>
+                トップページに戻る
+              </Button>
+            </div>
+          )}
         </section>
       </SidebarProvider>
     </BasicLayout>

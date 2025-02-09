@@ -1,8 +1,10 @@
-import { useState } from "react";
 import { TbRobot } from "react-icons/tb";
 import { GoogleLoginButton } from "../google-login-button";
 import { useRouter } from "next/router";
 
+/**
+ * ページ共通のHeader
+ */
 export const Header = () => {
   const router = useRouter();
 

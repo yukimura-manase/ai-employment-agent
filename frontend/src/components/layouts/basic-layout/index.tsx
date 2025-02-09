@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Header } from "@/components/shared/ui-parts/header";
 
 /**
- * Basic Layout
+ * 共通のBasic Layout
  *
  * - Header
  * - Main Area

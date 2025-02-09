@@ -27,10 +27,11 @@ export const EntrySheetPage = () => {
     userInformation: userInformationPrompt,
   });
 
-  // User取得まで、ローディングを表示する。
-  // if (!user) {
-  //   return <Loading />;
-  // }
+  // Userが取得できていない場合は、Topページにリダイレクトする。
+  if (!user) {
+    router.push("/");
+    return;
+  }
 
   return (
     <BasicLayout>
@@ -39,9 +40,12 @@ export const EntrySheetPage = () => {
         <SidebarTrigger />
         {/* 会話 */}
         <section className="w-full h-full flex flex-col gap-3 items-center justify-center">
-          <div className="container mx-auto py-10 ">
+          <div className="container mx-auto py-5">
             <h1 className="text-2xl font-bold mb-5 absolute top-[120px]">
               エントリーシート作成
+              <p className="text-sm text-gray-500 mt-2">
+                エントリーシート作成には、5~10秒ほどかかります。
+              </p>
             </h1>
           </div>
 

@@ -14,15 +14,27 @@ export const useJobSearch = ({
   userId,
   userInformation,
 }: UseJobSearchProps) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [jobSearchResult, setJobSearchResult] = useState<string>("");
 
   const createJobSearch = async () => {
-    const jobSearch = await JobSearchApi.createJobSearch({
-      userId: userId,
-      userInformation: userInformation,
-    });
-    setJobSearchResult(jobSearch.text);
+    setIsLoading(true);
+    try {
+      const jobSearch = await JobSearchApi.createJobSearch({
+        userId: userId,
+        userInformation: userInformation,
+      });
+      console.log("jobSearch", jobSearch);
+
+      setJobSearchResult(jobSearch.text);
+      alert("求人検索が完了しました🔍");
+    } catch (error) {
+      console.error("Error creating job search", error);
+      alert("求人検索に失敗しました🔍");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  return { jobSearchResult, createJobSearch };
+  return { isLoading, jobSearchResult, createJobSearch };
 };
