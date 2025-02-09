@@ -7,17 +7,29 @@ import {
   SidebarTrigger,
 } from "@/components/shared/ui-elements/sidebar";
 import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
+import { useCreateEntrySheet } from "./hooks/useCreateEntrySheet";
+import { Loading } from "@/components/shared/ui-elements/loading/Loading";
+import { useUserInformation } from "./hooks/useUserInformation";
+import { EntrySheetMarkdownView } from "./parts/EntrySheetMarkdownView";
 
 export const EntrySheetPage = () => {
   const { user } = useUserStates();
   const router = useRouter();
-
   console.log("EntrySheetPage", user);
 
-  // ログインしていない場合は、Topページにリダイレクトする。
+  const { userInformationPrompt } = useUserInformation({
+    userId: user?.userId ?? "",
+  });
+  console.log("userInformationPrompt", userInformationPrompt);
+
+  const { isLoading, createEntrySheet, entrySheetInfo } = useCreateEntrySheet({
+    userId: user?.userId ?? "",
+    userInformation: userInformationPrompt,
+  });
+
+  // User取得まで、ローディングを表示する。
   // if (!user) {
-  //   router.push("/");
-  //   return;
+  //   return <Loading />;
   // }
 
   return (
@@ -27,12 +39,30 @@ export const EntrySheetPage = () => {
         <SidebarTrigger />
         {/* 会話 */}
         <section className="w-full h-full flex flex-col gap-3 items-center justify-center">
-          <div className="container mx-auto py-10">
-            <h1 className="text-2xl font-bold mb-5">エントリーシート作成</h1>
+          <div className="container mx-auto py-10 ">
+            <h1 className="text-2xl font-bold mb-5 absolute top-[120px]">
+              エントリーシート作成
+            </h1>
           </div>
 
+          {/* エントリーシートのMarkdownを表示する */}
+          {entrySheetInfo && (
+            <EntrySheetMarkdownView entrySheet={entrySheetInfo.text} />
+          )}
+
           <div className="mt-5">
-            <Button onClick={() => router.push("/")}>トップページに戻る</Button>
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <div className="flex justify-center gap-3">
+                <Button onClick={() => createEntrySheet()}>
+                  エントリーシート作成
+                </Button>
+                <Button onClick={() => router.push("/")}>
+                  トップページに戻る
+                </Button>
+              </div>
+            )}
           </div>
         </section>
       </SidebarProvider>
