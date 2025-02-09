@@ -9,8 +9,8 @@ import {
 import { AppSidebar } from "@/components/shared/ui-parts/app-sidebar.tsx";
 import { useCreateEntrySheet } from "./hooks/useCreateEntrySheet";
 import { Loading } from "@/components/shared/ui-elements/loading/Loading";
-import { useUserInformation } from "./hooks/useUserInformation";
 import { EntrySheetMarkdownView } from "./parts/EntrySheetMarkdownView";
+import { useUserInformation } from "@/hooks/useUserInformation";
 
 export const EntrySheetPage = () => {
   const { user } = useUserStates();
