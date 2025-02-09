@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { voiceVoxUrl } from "@/constants/env";
 
 // 音声合成に必要なデータ(クエリ)を作成する
 export const generateAudioQuery = async (
@@ -7,7 +8,7 @@ export const generateAudioQuery = async (
   audioQuery: any;
 }> => {
   const response = await axios.post(
-    "http://localhost:50021/audio_query",
+    `${voiceVoxUrl}/audio_query`,
     null,
     {
       params: {
@@ -31,7 +32,7 @@ export const synthesizeSpeech = async (text: string): Promise<Blob> => {
 
   // 音声合成をリクエストする
   const synthesisResponse = await axios.post(
-    "http://localhost:50021/synthesis?speaker=1&enable_interrogative_upspeak=true",
+    `${voiceVoxUrl}/synthesis?speaker=1&enable_interrogative_upspeak=true`,
     audioQuery,
     {
       headers: {
