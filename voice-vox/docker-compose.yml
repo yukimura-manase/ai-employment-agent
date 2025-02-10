@@ -7,7 +7,6 @@ services:
     ports:
       - "50021:50021"
     tty: true
-    command: ["--enable_cors", "--allow_origin", "*"]
     #
     # 以下の項目はCPUの場合はなくても大丈夫
     #
